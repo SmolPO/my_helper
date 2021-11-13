@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ui_main_menu</class>
+ <widget class="QMainWindow" name="ui_main_menu">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>587</width>
+    <height>556</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="b_attorney">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>160</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Доверенность</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_invoice">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>70</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Накладная</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_journal">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>130</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Журнал-ковид</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_tabel">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>100</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Табель</string>
+    </property>
+   </widget>
+   <widget class="Line" name="ui_line">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>30</y>
+      <width>20</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_scan">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>40</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сканировать</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_company">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>310</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Заказчик</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_person">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>460</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сотрудник</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_fast">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>20</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Быстрые действия</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_act">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>250</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Исполнительная</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_pass_month">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Продление на месяц</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_pass_week">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Пропуск на выходные</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_pass_auto">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>70</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Продление на машину</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_notf">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>290</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Уведомления</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_pass_unlock">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>130</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Разблокировка пропуска</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_material">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>40</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ввоз материалов</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_get_money">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>130</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Заявка на деньги</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_pass">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Служебки</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_ohter">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>20</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Прочее</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_doc">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Документация</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_accounting">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>110</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Бухгалтерия</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_create">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>290</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Добавить</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ui_l_SP">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>200</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ТБ</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_pass_drive">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>160</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Разовый пропуск на машину</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_pass_issue">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>190</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Выдать пропуск</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_pdf_check">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>70</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сканер</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_boss">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>370</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Босс</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_notepad">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>190</y>
+      <width>121</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Блокнот</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_build">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>340</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Договор</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_itr">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>490</y>
+      <width>121</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Прораб</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_music">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>220</y>
+      <width>121</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сайты</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_auto">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>400</y>
+      <width>121</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Автомобиль</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_driver">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>430</y>
+      <width>121</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Водитель</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_tb">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>220</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Распечатать ТБ</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="l_weather">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>470</y>
+      <width>221</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="l_temp">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>490</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>470</y>
+      <width>16</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_new_bill">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>160</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Чек</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_empty">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>250</y>
+      <width>121</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Бланк</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menu">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>587</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <action name="btn_settings">
+   <property name="text">
+    <string>Настройки</string>
+   </property>
+  </action>
+  <action name="btn_about">
+   <property name="text">
+    <string>О программе</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Новый объект</string>
+   </property>
+  </action>
+  <action name="a_add_company">
+   <property name="text">
+    <string>Добавить исполнителя</string>
+   </property>
+  </action>
+  <action name="a_add_order">
+   <property name="text">
+    <string>Добавить заказчика</string>
+   </property>
+  </action>
+  <action name="a_add_workers">
+   <property name="text">
+    <string>Добавить рабочих</string>
+   </property>
+  </action>
+  <action name="a_add_bosses">
+   <property name="text">
+    <string>Добавить боссов</string>
+   </property>
+  </action>
+  <action name="a_add_bosses_post">
+   <property name="text">
+    <string>Добавить почты боссов</string>
+   </property>
+  </action>
+  <action name="action_7">
+   <property name="text">
+    <string>Добавить новый объект</string>
+   </property>
+  </action>
+  <action name="action_8">
+   <property name="text">
+    <string>Включить уведомления</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Добавить машину</string>
+   </property>
+  </action>
+  <action name="settings">
+   <property name="text">
+    <string>Настройки</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

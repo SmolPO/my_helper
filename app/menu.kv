@@ -1,0 +1,16 @@
+<CustomMenuItem>:
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgba: root.background_item
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    ImageButton:
+        source: root.icon_item
+        on_release: root.events_callback(root.id_item.split('.')[0])
+    Label:
+        text: root.text_item
+        color: root.text_color
+        font_size: '19sp'

@@ -1,0 +1,108 @@
+import collections as cl
+import random as rnd
+from datetime import datetime, date
+# 1
+print("work 1. Stack")
+stack = cl.deque()
+N = 30
+for i in range(N):
+    stack.append(i)
+print("Стек из " + str(N) + " элементов:" + str(stack))
+summ = 0
+K = 10
+for i in range(K):
+    summ = summ + stack.pop()
+stack.append(summ)
+print("новый стек после суммирования " + str(K) + "элементов : " + str(stack))
+
+# 2
+print("work 2. List")
+list_comp = cl.deque()
+status = 0
+menu = input("1 - рандомный ввод 10 компьютеров, иначе самостоятельный: ")
+company = ["asus", "samsung", "apple"]
+proc = ["intel", "amd", "Эльбрус", "Байкал"]
+if menu == "1":
+    count = int(input("Введите количество элементов: "))
+    for i in range(count):
+        item = dict.fromkeys(['id', 'model', 'company', 'processor', 'freq',
+                              'OZU', 'memory_HDD', 'start_market', 'cost', 'count'])
+        for key in item.keys():
+            if key == "id":
+                item[key] = i + 1
+            elif key == "cost":
+                item[key] = int(rnd.random() * 1000)
+            elif key == "company":
+                item[key] = company[i % 3]
+                continue
+            elif key == "processor":
+                item[key] = proc[i % 4]
+            elif key == "start_market":
+                item[key] = "{0}.{1}.{2}".format(int(rnd.random() * 27 + 1),
+                                                 int(rnd.random() * 11 + 1),
+                                                 int(2010 + rnd.random() * 10))
+            else:
+                item[key] = int(rnd.random() * 1000)
+        list_comp.append(item)
+    print(list_comp)
+
+else:
+    while True:
+        item = dict.fromkeys(['id', 'model', 'company', 'processor', 'freq',
+                              'OZU', 'memory_HDD', 'start_market', 'cost', 'count'])
+        print("Введите:")
+        while True:
+            try:
+                year_ = int(input('Введите год: '))
+                month_ = int(input('Введите месяц: '))
+                day_ = int(input('Введите день: '))
+                date_ = date(year_, month_, day_)
+            except:
+                print("ошибка. Нельзя преобразовать дату к формату dd.mm.yyyy")
+                continue
+            break
+        item['start_market'] = ".".join((str(day_), str(month_), str(year_)))
+        item['id'] = input('id: ')
+        item['model'] = input('модель: ')
+        item['company'] = input('марка: ')
+        item['processor'] = input('процессор: ')
+        item['freq'] = input('частота: ')
+        item['OZU'] = input('ОЗУ: ')
+        item['memory_HDD'] = input('жесткий диск: ')
+        item['cost'] = input('цена: ')
+        item['count'] = input('количество: ')
+        list_comp.append(item)
+        print("компьютер добавлен в список")
+        status = input("1 - ввести новый данные: ")
+        if status != "1":
+            break
+
+# печать всего списка
+for i in range(len(list_comp)):
+    print("_____")
+    for key in list_comp[i].keys():
+        print(key + " : " + str(list_comp[i][key]))
+
+# сортировка по типу процессора и печать НОВОГО (sorted не изменяет сортируемый список, а создает новый отсортированный)
+list_comp_1 = sorted(list_comp, key=lambda x: (x['processor']))
+print("\n___________сортировка по размеру процессору_______")
+for i in range(len(list_comp)):
+    print("_____")
+    print("processor : " + str(list_comp_1[i]["processor"]))
+    for key in list_comp_1[i].keys():   # печать всего списка
+        print(key + " : " + str(list_comp_1[i][key]))
+
+print("\n___________сортировка по размеру ОЗУ_______")
+list_comp_2 = sorted(list_comp, key=lambda x: (x['OZU']))
+for i in range(len(list_comp)):
+    print("_____")
+    for key in list_comp_2[i].keys():   # печать всего списка
+        print(key + " : " + str(list_comp_2[i][key]))
+
+print("\n___________сортировка по дате_______________")
+list_comp_3 = sorted(list_comp, key=lambda x: datetime.strptime(x['start_market'], '%d.%m.%Y'))
+for i in range(len(list_comp)):
+    print("_____")
+   # print("start_market : " + str(list_comp_3[i]["start_market"]))
+    for key in list_comp_3[i].keys():   # печать всего списка
+        print(key + " : " + str(list_comp_3[i][key]))
