@@ -10,7 +10,7 @@ from database import *
 
 
 class SendPost(QDialog):
-    def __init__(self, db, path):
+    def __init__(self, db, company, path, text=None):
         self.status_ = True
         self.conf = Ini(self)
         super(SendPost, self).__init__()
@@ -23,6 +23,9 @@ class SendPost(QDialog):
         self.sub = ""
         self.to_email = ""
         self.body_text = ""
+        self.company = company
+        if text:
+            self.note.append(text)
 
     def ev_send(self):
         self.my_sub = self.topic.text()
@@ -39,10 +42,14 @@ class SendPost(QDialog):
         self.close()
 
     def init_emails(self):
-        rows = self.db.get_data("email", "bosses")
-        if rows == ERR:
+        rows = self.db.get_data("email, company", "bosses")
+        posts = list()
+        for row in rows:
+            if row[-1] == self.company:
+                posts.append(row[0])
+        if not posts:
             return False
-        for item in rows:
+        for item in posts:
             self.email.addItem(item[0])
 
     def check_input(self):

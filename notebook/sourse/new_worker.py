@@ -2,6 +2,8 @@ from PyQt5.QtCore import QRegExp as QRE
 from PyQt5.QtGui import QRegExpValidator as QREVal
 from database import *
 from new_template import TempForm
+import PyPDF2
+from my_email import SendPost
 msgs = {"mes": "Сообщение", "atn": "Внимание"}
 
 
@@ -10,15 +12,11 @@ class NewWorker(TempForm):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("new_worker")
-        if not ui_file or ui_file == ERR:
-            self.status_ = False
-            return
         super(NewWorker, self).__init__(ui_file, parent, "workers")
-        if not self.status_:
-            return
         # my_pass
         self.cb_auto.stateChanged.connect(self.ev_auto)
         self.cb_vac.activated[str].connect(self.change_vac)
+        self.b_send_docs.clicked.connect(self.add_docs)
         self.init_mask()
         self.list_ui = [self.family, self.name, self.surname, self.bday, self.post,
                         self.passport, self.passport_post,
@@ -38,6 +36,36 @@ class NewWorker(TempForm):
         self.auto_numbers = ()
         self.my_mem = ""
         self.vac = True
+        self.send_docs = True
+
+    def add_docs(self):
+        if not self.inn.text() or not self.snils.text() or not self.family.text():
+            ok = msg_info(self, "Введите для начала ИНН, СНИЛС и ФИО работника")
+            if ok:
+                return
+        ok = msg_info(self, "Отсканируйте все документы нового работника, которые вы хотите отправить бухгалтеру")
+        if ok:
+            folder = self.parent.conf.get_path("scan")
+            files = os.listdir(folder)
+            if not files:
+                msg_info(self, "Не найдены сканы. Отсканируйте пожалуйста документы")
+                return
+            test = os.listdir(self.conf.get_path("workers"))
+            if not self.family.text() in test:
+                os.mkdir(self.conf.get_path("workers") + "/" + self.family.text())
+            path_worker = self.conf.get_path("workers") + "/" + self.family.text() + "/" + "документы" + PDF
+            pdf_merger = PyPDF2.PdfFileMerger()
+            for doc in files:
+                if PDF in doc:
+                    pdf_merger.append(str(folder + "/" + doc))
+            pdf_merger.write(path_worker)
+            os.startfile(path_worker)
+            ok = msg_info(self, "Отправить бухгалтеру?")
+            if ok:
+                if self.inn.text() and self.snils.text():
+                    data = "ИНН: " + self.inn.text() + ", СНИЛС: " + self.snils.text()
+                    wnd = SendPost(self.parent.db, self.parent.company, path_worker, data)
+                    wnd.exec_()
 
     def init_mask(self):
         symbols = QREVal(QRE("[а-яА-Я ]{30}"))

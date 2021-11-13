@@ -231,6 +231,7 @@ class Ini:
         self.sections = {"conf": "config", "path": "path", "ui": "ui_files"}
 
     def get_path(self, my_type):
+        self.path_folder + str(self.config.get(self.sections["path"], my_type))
         try:
             return self.path_folder + str(self.config.get(self.sections["path"], my_type))
         except:

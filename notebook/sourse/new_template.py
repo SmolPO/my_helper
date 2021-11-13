@@ -34,6 +34,7 @@ class TempForm (QDialog):
         self.vac = False
         self.bill = False
         self.mat = False
+        self.send_docs = False
 
     def check_start(self, ui_file):
         try:
@@ -69,6 +70,8 @@ class TempForm (QDialog):
         if self.bill:
             if self.create_bill(data) == ERR:
                 return
+        if self.send_docs:
+            self.add_docs()
         answer = msg_q(self, ADDED_NOTE)
         if answer == mes.Ok:
             self.close()
