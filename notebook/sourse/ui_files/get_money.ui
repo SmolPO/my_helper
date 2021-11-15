@@ -145,6 +145,9 @@
      <pointsize>12</pointsize>
     </font>
    </property>
+   <property name="maximum">
+    <number>1000</number>
+   </property>
   </widget>
   <widget class="QSpinBox" name="sb_emploeeyrs">
    <property name="enabled">
@@ -163,6 +166,9 @@
      <family>Times New Roman</family>
      <pointsize>12</pointsize>
     </font>
+   </property>
+   <property name="maximum">
+    <number>10000</number>
    </property>
   </widget>
   <widget class="QCheckBox" name="cb_day">
@@ -184,7 +190,7 @@
     <string>суточные</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_4">
+  <widget class="QLabel" name="l_1">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -225,7 +231,7 @@
     <string>Кол-во</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_6">
+  <widget class="QLabel" name="l_2">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -272,7 +278,7 @@
     <number>300</number>
    </property>
   </widget>
-  <widget class="QLabel" name="label_7">
+  <widget class="QLabel" name="l_3">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -649,6 +655,44 @@
    </property>
    <property name="text">
     <string>От кого</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="l_4">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>180</y>
+     <width>49</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Times New Roman</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>р.</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>220</y>
+     <width>49</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Times New Roman</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>р.</string>
    </property>
   </widget>
  </widget>

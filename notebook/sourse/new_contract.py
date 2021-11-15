@@ -33,18 +33,13 @@ class NewContact(TempForm):
                         self.part, self.price, self.date_end, self.nds, self.avans, self.status]
         self.cb_comp.addItem("1. " + self.parent.customer_[0])
         self.b_menu.setEnabled(False)
-        path_1 = self.conf.get_path("path")
-        path_2 = self.conf.get_path("path_contracts")
-        if path_1 == ERR or path_2 == ERR:
-            self.status_ = False
-            return
-        self.path = path_1 + path_2
+        self.path = self.conf.get_path("contracts")
 
     def init_mask(self):
         self.price.setValidator(QREVal(QRE("[,0-9]{1000}")))
 
     def _select(self, text):
-        self.b_menu.setEnabled(False) if text == empty else self.b_menu.setEnabled(True)
+        self.b_menu.setEnabled(False) if text == NOT else self.b_menu.setEnabled(True)
         return True
 
     def create_folders(self):
@@ -64,7 +59,7 @@ class NewContact(TempForm):
 
     def create_docs(self):
         if self.cb_select.currentText() == NOT:
-            msg_info(self, "Выберите сначала договор")
+            msg_info(self, "Введите сначала данные договора")
             return
         self.create_folders()
         wnd = CreateContract(self, self.path)

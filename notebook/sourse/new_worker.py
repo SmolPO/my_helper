@@ -17,6 +17,7 @@ class NewWorker(TempForm):
         self.cb_auto.stateChanged.connect(self.ev_auto)
         self.cb_vac.activated[str].connect(self.change_vac)
         self.b_send_docs.clicked.connect(self.add_docs)
+        self.cb_check.stateChanged.connect(self.check_)
         self.init_mask()
         self.list_ui = [self.family, self.name, self.surname, self.bday, self.post,
                         self.passport, self.passport_post,
@@ -30,13 +31,16 @@ class NewWorker(TempForm):
         if self.rows_from_db == ERR:
             self.status_ = False
             return
-        if self.parent.db.init_list(self.cb_contract, "name, id", "contracts") == ERR:
+        if self.parent.db.init_list(self.cb_contract, "number, id", "contracts") == ERR:
             self.status_ = False
             return
         self.auto_numbers = ()
         self.my_mem = ""
         self.vac = True
         self.send_docs = True
+
+    def check_(self, state):
+        self.b_ok.setEnabled(state)
 
     def add_docs(self):
         if not self.inn.text() or not self.snils.text() or not self.family.text():

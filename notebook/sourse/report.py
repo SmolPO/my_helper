@@ -21,7 +21,7 @@ class CreateReport(QDialog):
         self.list_table = []
         self.list_point = []
         self.list_work = []
-        self.path = self.conf.get_path("path") + self.conf.get_path("path_pat_patterns") + "/Исполнительная.xlsx"
+        self.path = self.conf.get_path("path") + self.conf.get_path("pat_patterns") + "/Исполнительная.xlsx"
         self.data = dict()
         self.list_ui = {"KS2": [
             self.act_1, self.act_2, self.act_3, self.act_4, self.act_5,
@@ -322,7 +322,7 @@ class CreateReport(QDialog):
         self.close()
 
     def create_report(self):
-        path = self.conf.get_path("path") + self.conf.get_path("path_contracts") + "/1030/result.xlsx"
+        path = self.conf.get_path("path") + self.conf.get_path("contracts") + "/1030/result.xlsx"
 
         self.init_data()
         self.doc.save(path)

@@ -20,16 +20,9 @@ class PDFModule(QDialog):
         super(PDFModule, self).__init__()
         self.conf = Ini(self)
         self.ui_file_1 = self.conf.get_ui("pdf_module")
-        if self.ui_file_1 == ERR:
-            self.status_ = False
-            return
         self.ui_file_2 = self.conf.get_ui("email")
-        if self.ui_file_2 == ERR:
-            self.status_ = False
-            return
+        uic.loadUi(self.ui_file_1, self)
         self.parent = parent
-        if not self.check_start():
-            return
         self.b_covid.clicked.connect(self.ev_covid)
         self.b_note.clicked.connect(self.ev_note)
         self.b_other.clicked.connect(self.ev_open)
@@ -49,8 +42,8 @@ class PDFModule(QDialog):
         path_file = self.check_input_c19()
         if not path_file or path_file == ERR:
             return False
-        path = self.conf.get_path("path_covid")
-        path_to = path + "/" + str(dt.now().date()) + PDF
+        path = self.conf.get_path("covid")
+        path_to = path + "/" + str(dt.datetime.now().date()) + PDF
         answer = msg_info(self, "Отправить ковидный журнал на почту " + to_email)
         if answer == mes.Ok:
             try:
@@ -72,8 +65,11 @@ class PDFModule(QDialog):
             msg_info(self, "В папке {0} нет отсканированных файлов. "
                            "Отсканируйте файл и повторите попытку".format(folder))
             return False
-        else:
+        elif PDF in os.listdir(folder)[0]:
             return folder + "/" + os.listdir(folder)[0]
+        else:
+            msg_info(self, "В папке Сканы не найдены .pdf файлы. Отсканируйте в .pdf и повторите попытку")
+            return False
 
     def check_input_n(self):
         folder = self.get_folder()
@@ -134,13 +130,11 @@ class PDFModule(QDialog):
         if not files:
             msg_info(self, "Файлы не найдены. Отсканируйте в PDF и программа сама их объединит по порядку")
             return
-        text, ok = QInputDialog.getText(self, "Название", "Название документа")
-        if not text:
-            return
-        if not ok:
-            return
         dirlist = QFileDialog.getExistingDirectory(self, "Выбрать папку", folder)
-        if ok:
+        if dirlist:
+            text, ok = QInputDialog.getText(self, "Название", "Название объединенного документа")
+            if not text or not ok:
+                return
             path = dirlist + "/" + text + PDF
         else:
             return
@@ -153,7 +147,7 @@ class PDFModule(QDialog):
         return
 
     def get_folder(self):
-        return self.conf.get_path("path_scan")
+        return self.conf.get_path("scan")
 
 """def check_file(parent):
     files = os.listdir(folder)

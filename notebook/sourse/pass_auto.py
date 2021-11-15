@@ -35,13 +35,10 @@ class AutoPass(TempPass):
         self.list_ui = list([self.driver_1, self.driver_2, self.driver_3, self.driver_4,
                              self.driver_5, self.driver_6, self.driver_7])
         self.count = 0
-        paths = [self.conf.get_path("path"), self.conf.get_path("path_pat_notes"),
-                 self.conf.get_path("path_notes_docs")]
-        if ERR in paths:
-            self.status_ = False
-            return
-        self.main_file = paths[0] + paths[1] + "/pass_auto.docx"
-        self.print_file = paths[0] + paths[2]
+        path_1 = self.conf.get_path("pat_notes")
+        path_2 =  self.conf.get_path("notes_docs")
+        self.main_file = path_1 + "/pass_auto.docx"
+        self.print_file = path_2
 
     # инициализация
     def init_drivers(self):
@@ -49,7 +46,7 @@ class AutoPass(TempPass):
         if drivers == ERR:
             return ERR
         for item in self.list_ui:
-            item.addItem(empty)
+            item.addItem(NOT)
         for row in drivers:
             for item in self.list_ui:
                 item.addItem(" ".join((row[0], row[1][0] + ".")))
@@ -59,7 +56,7 @@ class AutoPass(TempPass):
         auto = self.parent.db.get_data("model, gov_number", "auto")
         if auto == ERR:
             return ERR
-        auto.append([empty])
+        auto.append([NOT])
         for row in auto:
             self.cb_auto.addItem(row[0])
 
@@ -140,15 +137,6 @@ class AutoPass(TempPass):
             self.cb_mounth.setEnabled(True)
             self.d_from.setEnabled(False)
             self.d_to.setEnabled(False)
-
-    def new_worker(self):
-        flag = True
-        for item in self.list_ui:
-            if item.currentText() != empty:
-                item.setEnabled(True)
-            else:
-                item.setEnabled(flag)
-                flag = False
 
     def get_dates(self):
         if not self.cb_chouse.isChecked():

@@ -16,9 +16,6 @@ class MonthPass(TempPass):
         super(MonthPass, self).__init__(ui_file, parent, "workers")
         if not self.status_:
             return
-        self.b_save.clicked.connect(self.save_pattern)
-        self.b_kill.clicked.connect(self.kill_pattern)
-        self.b_open.clicked.connect(self.my_open_file)
         self.count_people = 0
         self.d_from.setDate(dt.datetime.now().date())
         self.d_to.setDate(from_str(".".join([str(count_days[dt.datetime.now().month - 1]),
@@ -30,6 +27,7 @@ class MonthPass(TempPass):
         self.list_ui = (self.worker_1, self.worker_2, self.worker_3, self.worker_4, self.worker_5, self.worker_6,
                         self.worker_7, self.worker_8, self.worker_9, self.worker_10)
         self.data = {"customer": "", "company": "", "start_date": "", "end_date": "", "number": "", "date": ""}
+        self.list_cb = ["(нет)" for i in range(len(self.list_ui))]
         if self.init_workers() == ERR:
             self.status_ = False
             return
@@ -48,30 +46,29 @@ class MonthPass(TempPass):
 
     def init_workers(self):
         for item in self.list_ui:
-            item.addItem("(нет)")
+            item.addItem(NOT)
             item.activated[str].connect(self.new_worker)
             item.setEnabled(False)
         self.list_ui[0].setEnabled(True)
-        fields = "(family, name, surname, post, birthday, passport, passport_got, adr, live_adr, status, id)"
-        workers_ = self.parent.db.get_data(fields, self.table) + self.parent.db.get_data(fields, "itrs")
-        self.workers = list()
-        for item in workers_:
-            if "работает" in item[-1] or "в отпуске" in item[-1]:
-                g = list()
-                for el in item[0][1:-1].split(","):
-                    g.append(str(el))
-                self.workers.append(g)
-        for people in self.workers:
-            family = str(people[-1]) + ". " + short_name(people)
-            if family[-2] != 3:
-                self.list_ui[0].addItem(family)
+        self.all_people.sort()
+        workers = list()
+        for item in self.all_people:
+            if "работает" in item[-2] or "в отпуске" in item[-2]:
+                workers.append(item)
+        workers.sort(key=lambda x: x[0])
+        for people in workers:
+            for item in self.list_ui:
+                item.addItem(short_name(people))
 
     # флаг на выбор всех
     def set_enabled_workers(self, state):
+        flag = False
         for elem in self.list_ui:
+            if flag and elem.currentText() == NOT:
+                return
             elem.setEnabled(state != Qt.Checked)
-        if state != Qt.Checked:
-            self.new_worker()
+            if elem.currentText() == NOT:
+                flag = True
 
     # получить данные
     # для заполнения текста
@@ -149,7 +146,7 @@ class MonthPass(TempPass):
         people.sort(key=lambda x: x[-2])
         list_people = {"2 дозы": [], "1 доза": [], "болел": []}
         for item in people:
-            list_people[item[-2]].append(item)
+            list_people[item[-3]].append(item)
         try:
             doc = docx.Document(self.vac_path)
         except:
@@ -195,7 +192,7 @@ class MonthPass(TempPass):
                 ind += 1
         if self.add_footer(doc) == ERR:
             return ERR
-        paths = [self.conf.get_path("path"), self.conf.get_path("path_notes_docs")]
+        paths = [self.conf.get_path("path"), self.conf.get_path("notes_docs")]
         if ERR in paths:
             return ERR
         path = paths[0] + paths[1] + "/vac_" + str(dt.datetime.now().date()) + ".docx"

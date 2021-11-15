@@ -201,19 +201,27 @@ class DataBase:
         self.my_commit(add_to_db((date, name, number), "notes"))
 
     def create_db(self):
-        some_str = "CREATE TABLE "
-        tables = ""
+        create = "CREATE TABLE "
+        drop = "DROP TABLE "
         for key in db_keys.keys():
             fields = db_keys[key][1:-1].split(", ")
             res_str = "("
             for word in fields:
                 res_str += word + " text, "
-            row = some_str + key + " " + res_str[:-2] + ")"
+            row = create + key + " " + res_str[:-2] + ")"
             try:
                 self.cursor.execute(row)
                 self.conn.commit()
             except Exception as ex:
-                print(key + " is NOT created. " + str(ex))
+                try:
+                    row = drop + key
+                    self.cursor.execute(row)
+                    self.conn.commit()
+                    row = create + key + " " + res_str[:-2] + ")"
+                    self.cursor.execute(row)
+                    self.conn.commit()
+                except:
+                    msg_info(self, "Ошибка создание Базы данных " + key)
                 logging.debug(key + " is NOT created. " + str(ex))
                 continue
             logging.debug(key + " is created")
@@ -225,9 +233,8 @@ class Ini:
         self.path_conf = os.getcwd() + "/config.ini"
         self.path_ui = os.getcwd() + "/ui_files/"
         self.config = ConfigParser()
-        self.path_folder = "B:/my_helper"
-        # self.path_folder = self.get_from_ini("path", "path")
         self.config.read(self.path_conf, encoding="windows-1251")
+        self.path_folder = self.get_from_ini("path", "path")
         self.sections = {"conf": "config", "path": "path", "ui": "ui_files"}
 
     def get_path(self, my_type):
@@ -289,8 +296,7 @@ class Ini:
 def short_name(data):
     if not data:
         return ""
-    text = data[0] + " " + data[1][0] + "." + data[2][0] + "."
-    return text
+    return data[0] + " " + data[1][0] + "." + data[2][0] + "."
 
 
 def time_delta(date_1, date_2):

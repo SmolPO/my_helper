@@ -924,12 +924,12 @@
    </property>
    <item>
     <property name="text">
-     <string>вакц 2 дозы</string>
+     <string>2 дозы</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>вакц 1 доза</string>
+     <string>1 доза</string>
     </property>
    </item>
    <item>

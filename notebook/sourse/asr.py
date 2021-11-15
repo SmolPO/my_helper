@@ -32,12 +32,7 @@ class Asr(QDialog):
             self.status_ = False
             return
         self.ind = 0
-        path_1 = self.conf.get_path("path")
-        path_2 = self.conf.get_path("path_pat_patterns")
-        if path_1 == ERR or path_2 == ERR:
-            self.status_ = False
-            return
-        self.path = path_1 + path_2
+        self.path = self.conf.get_path("pat_patterns")
         self.my_id = 0
 
     def check_start(self):
@@ -142,9 +137,8 @@ class Asr(QDialog):
             return msg_er(self, GET_FILE + path)
 
         doc.render(self.data)
-        path_1 = self.conf.get_path("path")
-        path_2 = self.conf.get_path("path_contracts")
-        path = path_1 + path_2 + "/1030/102021" + "/1.docx"
+        path = self.conf.get_path("contracts")
+        path = path + "/1030/102021" + "/1.docx"
         try:
             doc.save(path)
             os.startfile(path)

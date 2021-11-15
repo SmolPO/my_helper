@@ -24,6 +24,7 @@ from pass_month import MonthPass
 from pass_get import GetPass
 from pass_auto import AutoPass
 from pass_drive import DrivePass
+from pass_dt import DTPass
 from settings import Settings
 from database import *
 from my_tools import Notepad
@@ -34,19 +35,21 @@ from get_money import GetMoney
 2. Исполнительная (создание, заполнение) - 10 часов
 + 3. Отправка данных сотрудника (кнопка добавления +, тупо открыть менеджер и выбрать доки +) - 1 час
 4. Отчеты по материалам (в пандас в эксель) - 1 час
-5. Коммерческие (Форма + в договоре кнопку + и заполнить по форме) - 1 час
+- 5. Коммерческие (Форма + в договоре кнопку + и заполнить по форме) - 1 час
 + 6. Бланки на суточные (сделать кнопку меню и вынести все кнопки туда) - 30 мин +
 + 7. Путевые листы (в меню) - 30 мин +
 8. Расширить работу в выходные на N чел (придумать как, скорее вбок добавлять) - 1 час
 9. Дизаин формочек (разобрать как дизайнить) - 1 час
 10. Проверка работы (тестирование) - 2 часа
-11. Исходящие в другие заводы (добавление папки, ведение коммерческих, добавление доков) - 1 час
-12. Папка на тендер (сформировать) - 1 час +
+- 11. Исходящие в другие заводы (добавление папки, ведение коммерческих, добавление доков) - 1 час
+- 12. Папка на тендер (сформировать) - 1 час +
 13. Вакциная (решить с границами как задать) - 2 часа
 + 14. порядок в папке +
 + 15. сортировка списков +
 16. Магический список 
-+  17. Организация босса +
++ 17. Организация босса +
++ 18. Автоматическое формирование списка по объекту.
++ 19. Дизаин окон (2)
 Итого 26 часов, реально 20 часов - 2 полных дня.
 Сделать
  """
@@ -62,6 +65,12 @@ class Instruct(QDialog):
 
     def my_print(self):
         os.startfile(os.getcwd() + "/Инструкция.docx")
+
+
+class Commer(QDialog):
+    def __init__(self, parent):
+        super(Instruct, self).__init__()
+        pass
 
 
 class MainWindow(QMainWindow):
@@ -85,7 +94,6 @@ class MainWindow(QMainWindow):
         self.check_start()
         self.b_pass_week.clicked.connect(self.start_wnd)
         self.b_pass_month.clicked.connect(self.start_wnd)
-        # self.b_pass_auto.clicked.connect(self.start_wnd)
         self.b_pass_drive.clicked.connect(self.start_wnd)
         self.b_pass_unlock.clicked.connect(self.start_wnd)
         self.b_pass_issue.clicked.connect(self.start_wnd)
@@ -94,7 +102,6 @@ class MainWindow(QMainWindow):
         self.b_new_build.clicked.connect(self.start_wnd)
         self.b_new_boss.clicked.connect(self.start_wnd)
         self.b_new_itr.clicked.connect(self.start_wnd)
-        # self.b_new_invoice.clicked.connect(self.start_wnd)
         self.b_new_company.clicked.connect(self.start_wnd)
         self.b_new_auto.clicked.connect(self.start_wnd)
         self.b_new_driver.clicked.connect(self.start_wnd)
@@ -126,17 +133,18 @@ class MainWindow(QMainWindow):
         fileMenu.addAction(instrAction)
         fileMenu.addAction(sqlAction)
         fileMenu.addAction(exitAction)
-
-        self.b_empty.clicked.connect(self.ev_btn_start_file)
-        self.b_days.clicked.connect(self.blanks_days)
-        self.b_birki.clicked.connect(self.birki)
+        self.b_empty.clicked.connect(self.start_file)
+        self.b_days.clicked.connect(self.start_file)
+        self.b_birki.clicked.connect(self.start_file)
         self.b_travel.clicked.connect(self.travel)
-
-        # self.b_scan.clicked.connect(self.ev_btn_start_file)
-        self.b_attorney.clicked.connect(self.ev_btn_start_file)
-        self.b_invoice.clicked.connect(self.ev_btn_start_file)
-
-        # self.b_scan.setEnabled(False)
+        self.b_dt.clicked.connect(self.get_dt)
+        self.b_some.clicked.connect(self.start_file)
+        self.b_tools.setEnabled(False)
+        self.b_tb.setEnabled(False)
+        self.b_act.setEnabled(False)
+        self.b_plan.setEnabled(False)
+        self.b_attorney.clicked.connect(self.start_file)
+        self.b_invoice.clicked.connect(self.start_file)
 
         self.get_param_from_widget = None
         self.company = self.conf.get_config("company")
@@ -162,21 +170,20 @@ class MainWindow(QMainWindow):
         else:
             self.main_path = self.conf.get_from_ini("path", "path")
 
-    def blanks_days(self):
-        os.startfile(self.main_path + self.conf.get_path("path_patterns") + "/Суточные.xlsx")
-
-    def birki(self):
-        os.startfile(self.main_path + self.conf.get_path("path_patterns") + "/Бирки.xlsx")
+    def get_dt(self):
+        wnd = DTPass(self)
+        wnd.exec_()
+        pass
 
     def travel(self):
         count, ok = QInputDialog.getInt(self, "Кол-во копий", "Копий")
         if ok:
             for item in range(count):
-                os.startfile(self.main_path + self.conf.get_path("path_patterns") + "/Путевой_1.docs", "print")
+                os.startfile(self.conf.get_path("patterns") + "/Путевой_1.docx", "print")
             ok = msg_info(self, "Переверните распечатанную стопку и "
-                                "вставтье в принтер повторно для печати оборотной стороны")
+                                "вставьте в принтер повторно для печати оборотной стороны")
             for item in range(count):
-                os.startfile(self.main_path + self.conf.get_path("path_patterns") + "/Путевой_2.docs", "print")
+                os.startfile(self.conf.get_path("patterns") + "/Путевой_2.docx", "print")
 
     def helpers(self):
         self.my_help = not self.my_help
@@ -187,11 +194,11 @@ class MainWindow(QMainWindow):
 
     def start_func(self):
         ok = msg_info(self, "Добро пожаловать! Кратко расскажу как работать с данной программой. Начнем!")
-        ok = msg_info(self, "Выберите где разместить главную папку, с которой будете работать")
-        self.main_path = QFileDialog.getExistingDirectory(self, "Open Directory", os.getcwd(), QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)
-        if self.main_path:
-            shutil.copytree("/my_helper", self.main_path + "/Документация")
-        ok = msg_info(self, "Папка проекта создана!")
+        # ok = msg_info(self, "Выберите где разместить главную папку, с которой будете работать")
+        # self.main_path = QFileDialog.getExistingDirectory(self, "Open Directory", os.getcwd(), QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)
+        # if self.main_path:
+        #    shutil.copytree("/my_helper", self.main_path + "/Документация")
+        # ok = msg_info(self, "Папка проекта создана!")
 
     def ev_settings(self):
         wnd = Settings(self)
@@ -227,7 +234,7 @@ class MainWindow(QMainWindow):
             if _wnd[1]:
                 if name == "Договор":
                     data = self.db.get_data("status", "company")
-                    if not ("Заказчик",) in data:
+                    if not ["Заказчик"] in data:
                         msg_info(self, "Введите сначала данные Заказчика")
                         return
                     else:
@@ -279,19 +286,16 @@ class MainWindow(QMainWindow):
             if item[-2] == CUSTOMER:
                 self.customer_ = item
 
-    def ev_btn_start_file(self):
+    def start_file(self):
         files = {"Доверенность": "/Доверенность.xlsx",
                  "Накладная": "/Накладная.xlsx",
-                 "Бланк": "/Бланк.doc"}
+                 "Бланк": "/Бланк.doc",
+                 "Суточные": "/Суточные.docx",
+                 "Бирки на инстр.": "/Бирки.docx",
+                 "Бланки на нар-ы": "/Бланки.jpg"}
         name = self.sender().text()
-        path = self.conf.get_path("path_pat_patterns") + files[name]
-        if name == "Бланк":
-            try:
-                os.startfile(path)
-            except:
-                msg_info(self, GET_FILE + path)
-            return
-        try:
+        path = self.conf.get_path("pat_patterns") + files[name]
+        if name in ["Доверенность", "Накладная", "Бланки на нар-ы"]:
             count, ok = QInputDialog.getInt(self, name, "Кол-во копий")
             if ok:
                 for ind in range(count):
@@ -299,36 +303,16 @@ class MainWindow(QMainWindow):
                         os.startfile(path, "print")
                     except:
                         msg_info(self, GET_FILE + path)
-        except:
-            mes.question(self, "Сообщение", GET_FILE + path, mes.Cancel)
-            return
+        else:
+            try:
+                os.startfile(path)
+            except:
+                msg_info(self, GET_FILE + path)
+        return
+
 
     def get_new_data(self, data):
         self.data_to_db = data
-
-    def on_click_notif(self):  # TODO переделать в XML
-        # read
-        sender = self.sender()
-        notif = sender.get_text()
-        f = open(self.conf.get_path("main_path") + "/notif.txt", "r")
-        buffer = ""
-        for line in f.readlines():
-            if notif in line and line[1] == "0":
-                mes = line[0] + "1" + line[2:]
-            else:
-                mes = line
-            buffer = buffer + mes
-        f.close()
-        f = open(self.conf.get_config("main_path") + "/notif.txt", "w")
-        f.write(buffer)
-        f.close()
-
-    def add_notif(self, message, mode):
-        r_butt = QCheckBox(message)
-        r_butt.clicked.connect(self.on_click_notif)
-        self.ui_notification.addWidget(r_butt)
-        f = open(self.conf.get_config("main_path") + "/notif.txt", "a")
-        f.write(str([mode, message]) + "\n")
 
     def get_weather(self):
         s_city = self.conf.get_from_ini("city", "weather")

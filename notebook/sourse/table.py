@@ -31,11 +31,7 @@ class NewTable:
         cur_month, ok = QInputDialog.getItem(self.parent, "Выберите месяц", "Месяц", month, 0)
         if not ok:
             return
-        try:
-            path = self.conf.get_path("path") + self.conf.get_path("path_pat_tabel")
-        except:
-            msg_er(self, GET_INI)
-            return
+        path = self.conf.get_path("pat_table")
         path_save = path
         try:
             doc = xlsx.open(path)

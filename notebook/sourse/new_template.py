@@ -145,6 +145,8 @@ class TempForm (QDialog):
                         val = item.currentText()
                     if item.currentText() in si:
                         val = item.currentText()
+                    else:
+                        val = item.currentText()
             elif "QSpinBox" in str(type(item)):
                 val = str(item.value())
             elif "QCheckBox" in str(type(item)):
@@ -297,29 +299,23 @@ class TempForm (QDialog):
         return True
 
     def create_bill(self, data):
-        path_2 = self.conf.get_path("path_bills")
-        path =  path_2 + "/" + str(str(dt.datetime.now())[:10].replace("-", ".") + "_" +
-                                           str(self.current_id + 1) + ".pdf")
+        path = self.conf.get_path("bills") + "/" + str(str(dt.datetime.now())[:10].replace("-", ".") + "_" +
+                                           str(self.current_id + 1) + PDF)
         try:
             os.replace(self.filename, path)
         except:
             return msg_er(self, PERMISSION_ERR + path)
-        text = self.cb_buyer.currentText()[:-5]
-        text_ = short_name(self.cb_buyer.currentText().split(".")[1:-1])
         if self.create_report(self.sb_value.value(),
                               self.date.text().replace("-", "."),
-                              self.cb_buyer.currentText()[:-5]) == ERR:
+                              self.cb_buyer.currentText().split(". ")[1]) == ERR:
             return ERR
         return data
 
     def create_report(self, value, date, people):
-        path_1 = self.conf.get_path("path")
-        path_2 = self.conf.get_path("path_bills")
-        if path_1 == ERR or path_2 == ERR:
-            return ERR
-        path = path_1 + path_2 + "/" + str(dt.datetime.now().year) + \
-                                  "/" + str(dt.datetime.now().month) + \
-                                  "/" + str(dt.datetime.now().month) + str(dt.datetime.now().year) + ".xlsx"
+        path = self.conf.get_path("bills") + "/" + str(dt.datetime.now().year) + "/Чеки" + \
+                                             "/" + str(dt.datetime.now().month) + \
+                                             "/" + str(dt.datetime.now().month) + \
+                                                    str(dt.datetime.now().year) + XLSX
         try:
             wb = openpyxl.load_workbook(path)
         except:

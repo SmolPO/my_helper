@@ -8,31 +8,28 @@ class WeekPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_week")
-        if not ui_file or ui_file == ERR:
-            self.status_ = False
-            return
         super(WeekPass, self).__init__(ui_file, parent, "contracts")
         self.parent = parent
         self.table = "contracts"
-        if not self.status_:
-            return
         self.rows_from_db = self.parent.db.get_data("*", self.table)
         self.d_from.setDate(dt.datetime.now().date())
         self.d_to.setDate(dt.datetime.now().date())
+        # self.cb_object.activated[str].connect(self.object_select)
         self.workers = [self.worker_1, self.worker_2, self.worker_3,
                         self.worker_4, self.worker_5, self.worker_6,
                         self.worker_7, self.worker_8, self.worker_9]
-        self.b_save.clicked.connect(self.save_pattern)
-        self.b_kill.clicked.connect(self.kill_pattern)
         self.cb_other.stateChanged.connect(self.other_days)
         self.cb_sun.stateChanged.connect(self.week_days)
         self.cb_sub.stateChanged.connect(self.week_days)
+        self.cb_to.stateChanged.connect(self.too)
+        self.cb_to.setEnabled(False)
         self.d_from.setEnabled(False)
         self.d_to.setEnabled(False)
         self.data = {"number": "", "date": "", "week_day": "", "contract": "", "type_work": "",
                      "part": "", "company": "", "customer": "", "post_boss": "", "boss_part": ""}
-        self.list_ui = (self.worker_1, self.worker_2, self.worker_3, self.worker_4,
-                        self.worker_5, self.worker_6, self.worker_7, self.worker_8, self.worker_9)
+        self.list_ui = [self.worker_1, self.worker_2, self.worker_3, self.worker_4,
+                        self.worker_5, self.worker_6, self.worker_7, self.worker_8, self.worker_9]
+        self.list_cb = ["(нет)" for i in range(len(self.list_ui))]
         if self.init_object() == ERR:
             self.status_ = False
             return
@@ -43,6 +40,25 @@ class WeekPass(TempPass):
             self.status_ = False
             return
         self.main_file += "/pass_week.docx"
+
+    def too(self, state):
+        self.d_to.setEnabled(state)
+
+    def object_select(self):
+        rows = self.parent.db.get_data("*", "workers")
+        list_people = []
+        for row in rows:
+            if self.cb_object.currentText() in row:
+                list_people.append(row)
+        list_people.sort()
+        if len(list_people) < len(self.list_ui):
+            for i in range(len(list_people)):
+                item = self.list_ui[i]
+                people = list_people[i]
+                family = short_name(people)
+                self.new_worker(some="", man=family, indx=i)
+        else:
+            msg_info(self, "Слишком много сотрудников")
 
     # заполнение список
     def get_days(self):
@@ -61,7 +77,7 @@ class WeekPass(TempPass):
 
     def init_object(self):
        for row in self.rows_from_db:
-            self.cb_object.addItem(row[0])
+            self.cb_object.addItem(row[2])
 
     def init_boss(self):
         rows = self.parent.db.get_data("family, name, surname, post", "bosses")
@@ -77,10 +93,15 @@ class WeekPass(TempPass):
             item.activated[str].connect(self.new_worker)
             item.setEnabled(False)
         self.list_ui[0].setEnabled(True)
-        for people in self.all_people:
-            if people[-2] != 3:
-                family = str(people[-1]) + ". " + short_name(people)
-                self.list_ui[0].addItem(family)
+        self.all_people.sort()
+        workers = list()
+        for item in self.all_people:
+            if "работает" in item[-2] or "в отпуске" in item[-2]:
+                workers.append(item)
+        workers.sort(key=lambda x: x[0])
+        for people in workers:
+            for item in self.list_ui:
+                item.addItem(short_name(people))
 
     # обработчики кнопок
     def _ev_ok(self):
@@ -90,7 +111,7 @@ class WeekPass(TempPass):
         if self.cb_object.currentText() == NOT:
             mes.question(self, "Сообщение", "Выберите объект", mes.Cancel)
             return False
-        if self.cb_boss_part.currentText() == empty:
+        if self.cb_boss_part.currentText() == NOT:
             mes.question(self, "Сообщение", "Выберите Босса", mes.Cancel)
             return False
         self.data["boss_part"] = self.cb_boss_part.currentText()
@@ -134,16 +155,14 @@ class WeekPass(TempPass):
         return True
 
     def check_row(self, row):
-        my_id = int(row.split(".")[0])
-        family = row.split(".")[1][1:-2]
-        s_name = row.split(".")[1][-1]
-        s_sur = row.split(".")[2]
+        family = row.split(".")[0][:-2]
+        s_name = row.split(".")[0][-1]
+        s_sur = row.split(".")[1]
         for item in self.all_people:
-            if str(my_id) == str(item[-1]):
-                if family == item[0]:
-                    if s_name == item[1][0]:
-                        if s_sur == item[2][0]:
-                            return item
+            if family == item[0]:
+                if s_name == item[1][0]:
+                    if s_sur == item[2][0]:
+                        return item
 
     def _get_data(self):
         return True

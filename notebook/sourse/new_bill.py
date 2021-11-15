@@ -44,7 +44,7 @@ class NewBill(TempForm):
             self.cb_select.addItems([". ".join((row[-1], row[0]))])
 
     def ev_bill(self):
-        self.filename, tmp = QFileDialog.getOpenFileName(self, "Выбрать файл", self.conf.get_path("path_scan"),
+        self.filename, tmp = QFileDialog.getOpenFileName(self, "Выбрать файл", self.conf.get_path("scan"),
                                                          "PDF Files(*.pdf)")
         if self.filename:
             self.file_path.setText(self.filename.split("/")[-1])
@@ -53,7 +53,7 @@ class NewBill(TempForm):
         return True
 
     def create_note(self, value, date, people):
-        path_ = self.conf.get_path("path_bills")
+        path_ = self.conf.get_path("bills")
         path = path_ + "/" + str(dt.now().year) + \
                                     "/" + str(dt.now().month) + \
                                     "/" + str(dt.now().month) + str(dt.now().year) + ".xlsx"

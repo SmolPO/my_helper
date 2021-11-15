@@ -29,14 +29,14 @@ class NewCovid:
         if not list_people:
             mes.question(self.parent, "Сообщение", "Нет рабочих в Базе данных", mes.Cancel)
             return
-        path = self.conf.get_path("path_pat_covid")
+        path = self.conf.get_path("pat_covid")
         path_save = path
         try:
             doc = xlsx.open(path)
         except:
             return msg_er(self, GET_FILE + path)
+        page = "covid"
         try:
-            page = "covid"
             sheet = doc[page]
         except:
             return msg_er(self, GET_PAGE + page)

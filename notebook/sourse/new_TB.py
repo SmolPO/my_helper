@@ -26,8 +26,8 @@ class NewTB(QDialog):
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.ev_cancel)
         self.path = dict()
-        self.path["main_folder"] = self.conf.get_path("path_pat_tb")
-        self.path["print_folder"] = self.conf.get_path("path_tb")
+        self.path["main_folder"] = self.conf.get_path("pat_tb")
+        self.path["print_folder"] = self.conf.get_path("tb")
         self.list_ui = list()
         self.init_list()
 

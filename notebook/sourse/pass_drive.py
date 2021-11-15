@@ -89,7 +89,7 @@ class DrivePass(TempPass):
             if self.cb_contracts.currentText() == row[0]:
                 self.work = " ".join(row[4:7])
                 self.contract = " от ".join(row[2:4])
-            if self.cb_contracts.currentText() == empty:
+            if self.cb_contracts.currentText() == NOT:
                 self.work = ""
                 self.contract = ""
         self.change_note()
@@ -126,7 +126,7 @@ class DrivePass(TempPass):
             if self.cb_auto.currentText() == row[0]:
                 self.data["auto"] = " ".join(row[1:3])
                 self.data["gov_number"] = row[0]
-                self.data["track"] = " " if row[-2] == empty else "п/п " + row[-2]
+                self.data["track"] = " " if row[-2] == NOT else "п/п " + row[-2]
 
     def driver_changed(self):
         people = self.parent.db.get_data("*", self.table)
@@ -142,7 +142,7 @@ class DrivePass(TempPass):
 
     def check_input(self):
         for key in self.data.keys():
-            if self.data[key] == empty or self.data[key] == "":
+            if self.data[key] == NOT or self.data[key] == "":
                 msg_info(self, FULL_ALL)
                 return False
         return True

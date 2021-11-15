@@ -1,9 +1,6 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QMessageBox as mes
 import docxtpl
-import os
-import datetime as dt
 from database import *
 
 
@@ -85,19 +82,19 @@ class Journal(QDialog):
         if not self.check_input():
             return False
         try:
-            path = self.conf.get_path("path") + self.conf.get_path("path_pat_patterns") + "/Журнал.docx"
+            path = self.conf.get_path("path") + self.conf.get_path("pat_patterns") + "/Журнал.docx"
             doc = docxtpl.DocxTemplate(path)
         except:
             msg_er(self, GET_FILE + path)
             return False
         doc.render(self.data)
         try:
-            doc.save(self.parent.path + JORNAL_FILE)
+            doc.save(self.parent.path + JOURNAL_FILE)
             msg_info(self, "Журнал создан")
             os.startfile(path)
             self.close()
         except:
-            msg_er(self, GET_FILE + self.parent.path + JORNAL_FILE)
+            msg_er(self, GET_FILE + self.parent.path + JOURNAL_FILE)
             return False
         self.close()
 

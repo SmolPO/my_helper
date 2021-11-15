@@ -169,7 +169,7 @@
    </widget>
    <widget class="QPushButton" name="b_act">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -562,7 +562,7 @@
    </widget>
    <widget class="QPushButton" name="b_tb">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -716,6 +716,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="b_plan">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -754,6 +757,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="b_com">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -791,7 +797,10 @@
      <string>Суточные</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="b_instr">
+   <widget class="QPushButton" name="b_tools">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -846,6 +855,25 @@
     </property>
     <property name="text">
      <string>Бирки на инстр.</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="b_some">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>290</y>
+      <width>121</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Бланки на нар-ы</string>
     </property>
    </widget>
   </widget>

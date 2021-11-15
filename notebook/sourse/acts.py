@@ -54,7 +54,7 @@ class Acts(QDialog):
             return msg_er(self, "Укажите сначала номер договора")
         self.filename, tmp = QFileDialog.getOpenFileName(self,
                                                          "Выбрать файл",
-                                                         self.conf.get_path("path_scan"),
+                                                         self.conf.get_path("scan"),
                                                          "*.*(*.*)")
         if not self.filename:
             return
@@ -75,7 +75,7 @@ class Acts(QDialog):
 
     def ev_latter(self):
         try:
-            path_from = self.conf.get_path("path_pat_patterns") + "/Бланк.doc"
+            path_from = self.conf.get_path("pat_patterns") + "/Бланк.doc"
             path_to = self.conf.get_path("path") + "/Исходящие/Письма/Письмо.doc"
             os.replace(path_from, path_to)
             os.startfile(path_to)

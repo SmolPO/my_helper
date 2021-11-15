@@ -18,8 +18,10 @@ class TempPass(QDialog):
         # my_pass
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.close)
-        self.b_open.clicked.connect(self.my_open_file)
-
+        try:
+            self.b_open.clicked.connect(self.my_open_file)
+        except:
+            pass
         self.d_note.setDate(dt.datetime.now().date())
         self.number.setValue(self.conf.get_next_number())
 
@@ -27,8 +29,8 @@ class TempPass(QDialog):
                            "май", "июнь", "июль", "август", "сентябрь",
                            "октябрь", "ноябрь", "декабрь"]
         self.data = dict()
-        self.main_file = self.conf.get_path("path_pat_notes")
-        self.print_folder = self.conf.get_path("path_notes_docs")
+        self.main_file = self.conf.get_path("pat_notes")
+        self.print_folder = self.conf.get_path("notes_docs")
 
         fields = "family, name, surname, post, passport, passport_got, birthday, adr,  live_adr"
         self.people_all = self.parent.db.get_data(fields, "workers") + self.parent.db.get_data(fields, "itrs")
@@ -36,7 +38,7 @@ class TempPass(QDialog):
             return
         self.people_mark = list()
         fields = "family, name, surname, post, passport, passport_got, " \
-                 "birthday, adr,  live_adr, d_vac_1, d_vac_2, place, vac_doc, vac_type, id"
+                 "birthday, adr,  live_adr, d_vac_1, d_vac_2, place, vac_doc, vac_type, status, id"
         rows = [self.parent.db.get_data(fields, "workers"), self.parent.db.get_data(fields, "itrs")]
         if ERR in rows:
             return
@@ -71,13 +73,13 @@ class TempPass(QDialog):
         if not self.check_input():
             return False
         print_file = self.print_folder + "/" + self.number.text() + "_" + self.d_note.text() + ".docx"
-
         path = self.main_file
+        doc = docxtpl.DocxTemplate(path)
+        doc.render(self.data)
+        path = print_file
+        doc.save(path)
         try:
-            doc = docxtpl.DocxTemplate(path)
-            doc.render(self.data)
-            path = print_file
-            doc.save(path)
+            pass
         except:
             return msg_er(self, GET_FILE + path)
         if self._create_data(path) == ERR:
@@ -94,30 +96,49 @@ class TempPass(QDialog):
         cb.clear()
         pass
 
-    def new_worker(self):
-        flag = True
-        workers = self.parent.db.get_data("*", "workers")
-        itrs = self.parent.db.get_data("*", "itrs")
-        peoples_ = workers + itrs
-        peoples = []
-        for man in peoples_:
-            if man[-2] == "уволен":
-                continue
-            else:
-                peoples.append(man)
-        i = 0
+    def compare_family(self, family_short, family_full):
+        if family_short == family_full:
+            return True
+        pass
+
+    def add_item(self, people, ind):
         for item in self.list_ui:
-            if item.currentText() == NOT:
-                break
-            for el in peoples:
-                if el[0] in item.currentText().split(". ")[1]:
-                    if el[1][0] in item.currentText().split(". ")[1][-4] and \
-                            el[2][0] in item.currentText().split(". ")[1][-2]:
-                        peoples.pop(i)
-                i += 1
-        for item in peoples:
-            for el in self.list_ui[:i]:
-                el.addItem(str(item[-1]) + ". " + short_name(item[:3]))
+            if self.list_ui.index(item) == ind:
+                continue
+            man = [item.itemText(i) for i in range(item.count())]
+            if not people == NOT:
+                man.append(people)
+            man.sort()
+            i = man.index(people)
+            item.insertItem(i, people)
+            print([item.itemText(i) for i in range(item.count())])
+
+    def kill_item(self, people, ind):
+        for item in self.list_ui:
+            if self.list_ui.index(item) == ind:
+                continue
+            for i in range(item.count()):
+                if item.itemText(i) == people:
+                    item.removeItem(i)
+                    break
+
+    def new_worker(self, some, man=None, indx=None):
+        if man:
+            val = man
+            ind = indx
+        else:
+            val = self.sender().currentText()
+            ind = self.list_ui.index(self.sender())
+        flag = True
+        if val == NOT:
+            if not self.list_cb[ind] == NOT:
+                self.add_item(self.list_cb[ind], ind)
+                self.list_cb[ind] = NOT
+        else:
+            self.kill_item(val, ind)
+            if self.list_cb[ind] != NOT:
+                self.add_item(self.list_cb[ind], ind)
+            self.list_cb[ind] = val
 
         for item in self.list_ui:
             if item.currentText() != NOT:
@@ -125,19 +146,6 @@ class TempPass(QDialog):
             else:
                 item.setEnabled(flag)
                 flag = False
-        pass
-
-    def my_open_file(self):
-        try:
-            os.startfile(self.print_file)
-        except:
-            return msg_er(self, GET_FILE + self.print_file)
-
-    def save_pattern(self):
-        pass
-
-    def kill_pattern(self):
-        pass
 
     def get_contract(self, name):
         # получить номер договора по короткому имени
@@ -153,13 +161,15 @@ class TempPass(QDialog):
 
     def get_worker(self, family):
         rows = self.parent.db.get_data("family, name, surname, post, passport, "
-                                       "passport_got, birthday, adr,  live_adr, id", "workers")
+                                       "passport_got, birthday, adr,  live_adr, id", "workers") + \
+               self.parent.db.get_data("family, name, surname, post, passport, "
+                                       "passport_got, birthday, adr,  live_adr, id", "itrs")
         if rows == ERR:
             return ERR
         if family == "all":
             return rows
         for row in rows:
-            if family[:-5] == row[0]:  # на форме фамилия в виде Фамилия И.О.
+            if family[:-5] in row:  # на форме фамилия в виде Фамилия И.О.
                 return row
 
     def get_worker_week(self, family):
@@ -187,12 +197,13 @@ class TempPass(QDialog):
             self.cb_sun.setEnabled(False)
             self.cb_sub.setEnabled(False)
             self.d_from.setEnabled(True)
-            self.d_to.setEnabled(True)
+            self.cb_to.setEnabled(True)
         else:
             self.cb_sun.setEnabled(True)
             self.cb_sub.setEnabled(True)
             self.d_from.setEnabled(False)
             self.d_to.setEnabled(False)
+            self.cb_to.setEnabled(False)
 
     def week_days(self, state):
         if state == Qt.Checked:
@@ -238,13 +249,11 @@ class TempPass(QDialog):
         return (end_next_month, next_month, next_year)
 
     def check_row(self, row):
-        my_id = int(row.split(".")[0])
-        family = row.split(".")[1][1:-2]
-        s_name = row.split(".")[1][-1]
-        s_sur = row.split(".")[2]
+        family = row.split(".")[0][:-2]
+        s_name = row.split(".")[0][-1]
+        s_sur = row.split(".")[1]
         for item in self.all_people:
-            if str(my_id) == str(item[-1]):
-                if family == item[0]:
-                    if s_name == item[1][0]:
-                        if s_sur == item[2][0]:
-                            return item
+            if family == item[0]:
+                if s_name == item[1][0]:
+                    if s_sur == item[2][0]:
+                        return item

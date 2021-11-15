@@ -21,10 +21,11 @@ class GetPass(TempPass):
         self.d_to.setDate(from_str(".".join([str(count_days[dt.datetime.now().month - 1]),
                                              str(dt.datetime.now().month),
                                              str(dt.datetime.now().year)])))
-        self.list_ui = (self.worker_1, self.worker_2, self.worker_3, self.worker_4, self.worker_5,
-                        self.worker_6, self.worker_7, self.worker_8, self.worker_9, self.worker_10)
+        self.list_ui = [self.worker_1, self.worker_2, self.worker_3, self.worker_4, self.worker_5,
+                        self.worker_6, self.worker_7, self.worker_8, self.worker_9, self.worker_10]
         self.data = {"customer": "", "company": "", "start_date": "", "end_date": "",
                      "contract": "", "date_contract": "", "number": "", "date": ""}
+        self.list_cb = ["(нет)" for i in range(len(self.list_ui))]
         self.main_file += "/pass_get.docx"
         if self.init_workers() == ERR:
             self.status_ = False
@@ -42,18 +43,21 @@ class GetPass(TempPass):
 
     def init_workers(self):
         for item in self.list_ui:
-            item.addItem("(нет)")
+            item.addItem(NOT)
             item.activated[str].connect(self.new_worker)
             item.setEnabled(False)
         self.list_ui[0].setEnabled(True)
-        people = self.parent.db.get_data("family, name, surname, post, passport, "
-                                         "passport_got, birthday, adr,  live_adr", "workers")
-        if people == ERR or not people:
-            return ERR
-        for name in people:
-            family = name[0] + " " + ".".join([name[1][0], name[2][0]]) + "."
-            for item in self.list_ui:
-                item.addItem(family)
+        self.all_people.sort()
+        workers = list()
+        for item in self.all_people:
+            if "работает" in item[-2] or "в отпуске" in item[-2]:
+                workers.append(item)
+        workers.sort(key=lambda x: x[0])
+        for people in workers:
+            if people[-2] != 3:
+                family = short_name(people)
+                for item in self.list_ui:
+                    item.addItem(family)
 
     def _get_data(self):
         self.data["start_date"] = self.d_from.text()
@@ -86,19 +90,21 @@ class GetPass(TempPass):
             if elem.currentText() != NOT:
                 workers.append(self.get_worker(elem.currentText()))
         i = 1
+
+        doc = docx.Document(path)
+        for people in workers:
+            doc.tables[1].add_row()
+            doc.tables[1].rows[i].cells[0].text = str(i)
+            doc.tables[1].rows[i].cells[1].text = " ".join(people[0:3])
+            doc.tables[1].rows[i].cells[2].text = people[3]
+            doc.tables[1].rows[i].cells[3].text = people[6]
+            doc.tables[1].rows[i].cells[4].text = " ".join(people[4:6])
+            doc.tables[1].rows[i].cells[5].text = people[7]
+            doc.tables[1].rows[i].cells[6].text = people[8]
+            i += 1
+        doc.save(path)
         try:
-            doc = docx.Document(path)
-            for people in workers:
-                doc.tables[1].add_row()
-                doc.tables[1].rows[i].cells[0].text = str(i)
-                doc.tables[1].rows[i].cells[1].text = " ".join(people[0:3])
-                doc.tables[1].rows[i].cells[2].text = people[3]
-                doc.tables[1].rows[i].cells[3].text = people[6]
-                doc.tables[1].rows[i].cells[4].text = " ".join(people[4:6])
-                doc.tables[1].rows[i].cells[5].text = people[7]
-                doc.tables[1].rows[i].cells[6].text = people[8]
-                i += 1
-            doc.save(path)
+            pass
         except:
             return msg_er(self, GET_FILE + path)
 

@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMessageBox
 import docxtpl
 import inserts as ins
 from my_email import *
-# import pymorphy2
+from database import *
 
 
 class GetMoney(QDialog):
@@ -60,10 +60,11 @@ class GetMoney(QDialog):
         self.data = {"date": "", "post": "", "family": "", "text": ""}
         self.change_note()
 
-        self.main_file = self.conf.get_path("path_pat_notes") + \
+        self.main_file = self.conf.get_path("pat_notes") + \
                          self.conf.get_from_ini("get_money", "patterns")
-        self.print_folder = self.conf.get_path("path_bills") + \
-                            "/" + str(dt.datetime.now().year) + "/" + str(dt.datetime.now().month)
+        self.print_folder = self.conf.get_path("bills") + \
+                            "/" + str(dt.datetime.now().year) + "/" + \
+                            "/Заявки на деньги"
 
     def ev_ok(self):
         if not self.check_input():
@@ -79,7 +80,8 @@ class GetMoney(QDialog):
             return
         for row in rows:
             if self.cb_customer.currentText().split(".")[0] == str(row[-1]):
-                self.data["post"] = row[0].lower()
+                self.data["post_g"] = dictionary[row[0]]["gent"]
+                self.data["post_i"] = row[0]
                 people = self.cb_customer.currentText()
                 family = people.split(". ")[1][:-5]
                 # fam = morph.parse(family)[0].inflect({'gent'})[0].capitalize()
@@ -172,14 +174,8 @@ class GetMoney(QDialog):
         self.note_result.setText(" ".join(text))
 
     def day_money(self, state):
-        if state:
-            self.sb_days.setEnabled(True)
-            self.sb_emploeeyrs.setEnabled(True)
-            self.sb_cost.setEnabled(True)
-        else:
-            self.sb_days.setEnabled(False)
-            self.sb_emploeeyrs.setEnabled(False)
-            self.sb_cost.setEnabled(False)
+        list_ui = [self.sb_days, self.sb_emploeeyrs, self.sb_cost, self.l_1, self.l_2, self.l_3]
+        tmp = [item.setEnabled(state) for item in list_ui]
 
     def ev_change(self):
         answer = mes.question(self, "Изменение записи", "Вы действительно хотите изменить запись на " +

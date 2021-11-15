@@ -17,11 +17,7 @@ class Contract(QDialog):
         self.b_def.clicked.connect(self.ev_open)
         self.b_ekr.clicked.connect(self.ev_open)
         self.b_exit.clicked.connect(self.close)
-        path_1 = self.conf.get_path("path_docs")
-        if path_1 == ERR:
-            self.status_ = False
-            return
-        self.path = parent.path + path_1
+        self.path = self.conf.get_path("docs")
 
     def check_start(self):
         self.status_ = True
