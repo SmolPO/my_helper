@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
         if check == "NO":
             if self.db.create_db() == ERR:
                 return
-            if self.conf.set_val("config", "is_create_db", "YES") == ERR:
+            if self.conf.set_val("config", "is_created_db", "YES") == ERR:
                 return
         self.check_start()
         self.b_pass_week.clicked.connect(self.start_wnd)
@@ -140,7 +140,7 @@ class MainWindow(QMainWindow):
         self.b_dt.clicked.connect(self.get_dt)
         self.b_some.clicked.connect(self.start_file)
         self.b_tools.setEnabled(False)
-        self.b_tb.setEnabled(False)
+        self.b_tb.setEnabled(True)
         self.b_act.setEnabled(False)
         self.b_plan.setEnabled(False)
         self.b_attorney.clicked.connect(self.start_file)

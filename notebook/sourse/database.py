@@ -215,6 +215,7 @@ class DataBase:
             except Exception as ex:
                 try:
                     row = drop + key
+                    self.connect_to_db()
                     self.cursor.execute(row)
                     self.conn.commit()
                     row = create + key + " " + res_str[:-2] + ")"
@@ -222,7 +223,7 @@ class DataBase:
                     self.conn.commit()
                 except:
                     msg_info(self, "Ошибка создание Базы данных " + key)
-                logging.debug(key + " is NOT created. " + str(ex))
+                    logging.debug(key + " is NOT created. " + str(ex))
                 continue
             logging.debug(key + " is created")
 
