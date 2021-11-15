@@ -3,7 +3,7 @@ logging.basicConfig(filename="B:/my_helper/log_file.log", level=logging.INFO)
 
 db_keys = {"auto": "(gov_number, brand, model, track_number, id)",
            "drivers": "(family, name, surname, birthday, passport, adr, id)",
-           "workers": "(family, name, surname, birthday, post, passport, passport_got, adr, live_adr, phone, inn, "
+           "workers": "(family, name, surname, post, birthday, passport, passport_got, adr, live_adr, phone, inn, "
                       "snils, "
                       "numb_contract, date_contract, "
                       "numb_h, numb_group_h, date_h, "

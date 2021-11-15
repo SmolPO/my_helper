@@ -119,6 +119,7 @@ class NewContact(TempForm):
                     folders.append(_folders[6])
 
     def check_input(self):
+        data = self.get_data()
         if "" in list([self.name.text(), self.number.text(),
                        self.my_object.toPlainText(), self.work.toPlainText(),
                       self.part.text(), self.price.text(), self.date_end.text()]) or self.date.text() == ZERO:
@@ -127,7 +128,7 @@ class NewContact(TempForm):
         if yong_date(young=self.date.text(), old=self.date_end.text()):
             msg_info(self, WRONG_DATE)
             return False
-        return True
+        return data
 
     def _ev_ok(self):
         return True

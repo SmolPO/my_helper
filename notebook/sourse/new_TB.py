@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import QDialog, QCheckBox, QLabel
 from PyQt5 import uic
 import docx
 import docxtpl
-import os
 from database import *
 types_docs = {"1": "/ot_doc.docx", "2": "/ptm_doc.docx", "3": "/eb_doc.docx"}
 types_card = {"1": "/ot_card.docx", "2": "/ptm_card.docx", "3": "/es_card.docx"}
@@ -26,35 +25,58 @@ class NewTB(QDialog):
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.ev_cancel)
         self.path = dict()
+        self.list_ui = [self.worker_1, self.worker_2, self.worker_3, self.worker_4, self.worker_5,
+                        self.worker_6, self.worker_7, self.worker_8, self.worker_9, self.worker_10,
+                        self.worker_11, self.worker_12, self.worker_13, self.worker_14, self.worker_15,
+                        self.worker_16, self.worker_17, self.worker_18, self.worker_19, self.worker_20,
+                        self.worker_21, self.worker_22, self.worker_23, self.worker_24, self.worker_25,
+                        self.worker_26, self.worker_27, self.worker_28, self.worker_29, self.worker_30]
+        self.list_cb = [NOT for i in range(len(self.list_ui))]
+        rows = [self.parent.db.get_data(ALL, WORKERS), self.parent.db.get_data(ALL, ITRS)]
+        if ERR in rows:
+            return
+        self.all_people = rows[0] + rows[1]
         self.path["main_folder"] = self.conf.get_path("pat_tb")
         self.path["print_folder"] = self.conf.get_path("tb")
         self.list_ui = list()
         self.init_list()
 
-    def init_list(self):
-        g = iter(range(self.count + 1))
-        for item in self.rows_from_db:
-            i = next(g)
-            number = QLabel(item[-1])
-            checkbox = QCheckBox()
-            family = QLabel(item[0] + item[1][0] + "." + item[2][0] + ".")
-            self.grid.addWidget(number, i, 0)
-            self.grid.addWidget(checkbox, i, 1)
-            self.grid.addWidget(family, i, 2)
-        self.grid.height = 60 * len(self.rows_from_db)
-        self.setFixedSize(self.geometry().width(), 60 + len(self.rows_from_db) * 60 + 70)
-        return
+    def init_workers(self):
+        for item in self.list_ui:
+            item.addItem(NOT)
+            item.activated[str].connect(self.new_worker)
+            item.setEnabled(False)
+        self.list_ui[0].setEnabled(True)
+        self.all_people.sort()
+        workers = list()
+        for item in self.all_people:
+            if "работает" in item[-2] or "в отпуске" in item[-2]:
+                workers.append(item)
+        workers.sort(key=lambda x: x[0])
+        for people in workers:
+            for item in self.list_ui:
+                item.addItem(short_name(people))
 
     def get_list_people(self):
         list_people = list()
-        for i in range(self.count):
-            if self.grid.itemAtPosition(i, 1).widget().isChecked():
-                number = self.grid.itemAtPosition(i, 0).widget().text()
-                if len(self.rows_from_db) > int(number)-1:
-                    list_people.append(self.rows_from_db[int(number)-1])
-                else:
-                    return msg_er(self, BIG_INDEX)
+        for elem in self.list_ui:
+            family = elem.currentText()
+            if family != NOT:
+                item = self.check_row(family)
+                if item:
+                    list_people.append(item)
+        list_people.sort(key=lambda x: x[0])
         return list_people
+
+    def check_row(self, row):
+        family = row.split(".")[0][:-2]
+        s_name = row.split(".")[0][-1]
+        s_sur = row.split(".")[1]
+        for item in self.all_people:
+            if family == item[0]:
+                if s_name == item[1][0]:
+                    if s_sur == item[2][0]:
+                        return item
 
     def ev_ok(self):
         people = self.get_list_people()

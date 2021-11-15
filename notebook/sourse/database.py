@@ -10,7 +10,8 @@ import os
 si = ["тн", "т", "кг", "м2", "м", "м/п", "мм", "м3", "л", "мм", "шт"]
 count_days = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 statues = ["работает", "отпуск", "уволен"]
-
+types_docs = {"1": "/ОТ.docx", "2": "/ПТМ.docx", "3": "/ЭБ.docx"}
+types_card = {"1": "/ОТ_уд.docx", "2": "/ПТМ_уд.docx", "3": "/ЭБ_уд.docx"}
 ERR = -1
 
 GET_UI = "Не удалось найти файл дизайна: "
@@ -64,11 +65,22 @@ COVID = "болел"
 ZERO = "01.01.2000"
 NOT = "(нет)"
 
+#TB
+ALL = "*"
+WORKERS = "workers"
+ITRS = "itrs"
+AUTO = "auto"
+DRIVERS = "drivers"
+BOSSES = "bosses"
+COMPANY = "company"
+CONTRACTS = "contracts"
+
 ASR_FILE = "/asr.docx"
 JOURNAL_FILE = "/Журнал.docx"
 PDF = ".pdf"
 UI = ".ui"
 XLSX = ".xlsx"
+DOCX = ".docx"
 dictionary = {"Производитель работ": {"gent": "производителя работ", "datv": "производителю работ"},
               "Технический директор": {"gent": "технического директора", "datv": "техническому директору"}}
 path_log = os.getcwd() + "/log_file.log"
@@ -298,6 +310,10 @@ def short_name(data):
     if not data:
         return ""
     return data[0] + " " + data[1][0] + "." + data[2][0] + "."
+
+
+def full_name(data):
+    return " ".join(data[:3])
 
 
 def time_delta(date_1, date_2):

@@ -27,7 +27,7 @@ class MonthPass(TempPass):
         self.list_ui = (self.worker_1, self.worker_2, self.worker_3, self.worker_4, self.worker_5, self.worker_6,
                         self.worker_7, self.worker_8, self.worker_9, self.worker_10)
         self.data = {"customer": "", "company": "", "start_date": "", "end_date": "", "number": "", "date": ""}
-        self.list_cb = ["(нет)" for i in range(len(self.list_ui))]
+        self.list_cb = [NOT for i in range(len(self.list_ui))]
         if self.init_workers() == ERR:
             self.status_ = False
             return
