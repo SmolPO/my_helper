@@ -18,6 +18,7 @@ from new_contract import NewContact
 from new_material import NewMaterial
 from new_tool import NewTool
 from new_TB import NewTB
+from new_tender import NewTender
 from acts import Acts
 from my_email import *
 from pass_week import WeekPass
@@ -74,12 +75,6 @@ class Instruct(QDialog):
         os.startfile(os.getcwd() + "/Инструкция.docx")
 
 
-class Commer(QDialog):
-    def __init__(self, parent):
-        super(Instruct, self).__init__()
-        pass
-
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -123,6 +118,8 @@ class MainWindow(QMainWindow):
         self.b_tabel.clicked.connect(self.start_wnd)
         self.b_new_tool.clicked.connect(self.start_wnd)
         self.b_tools.clicked.connect(self.start_wnd)
+        self.b_tender.clicked.connect(self.start_wnd)
+
         exitAction = QAction('Настройки', self)
         exitAction.setStatusTip('Настройки')
         sqlAction = QAction('Запрос в базу данных', self)
@@ -240,7 +237,8 @@ class MainWindow(QMainWindow):
                  "Чек": (NewBill, None),
                  "Заявка на деньги": (GetMoney, None),
                  "Разовый пропуск": (DrivePass, CONTRACTS),
-                 "Ввоз инстр-ов": (ToolsPass, TOOLS)}
+                 "Ввоз инстр-ов": (ToolsPass, None),
+                 "Тендер": (NewTender, None)}
 
         _wnd = forms.get(name, "")
         if _wnd:

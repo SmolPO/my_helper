@@ -178,11 +178,13 @@ class DataBase:
             return msg_er(self.parent, GET_NEXT_ID)
 
     def my_commit(self, data):
+        self.connect_to_db()
+        print(data)
+        self.cursor.execute(data)
+        self.conn.commit()
         if data:
             try:
-                self.connect_to_db()
-                self.cursor.execute(data)
-                self.conn.commit()
+
                 return True
             except:
                 return msg_er(self.parent, ADD_DB)
