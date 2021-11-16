@@ -18,7 +18,6 @@ class NewWorker(TempForm):
         ui_file = self.conf.get_ui("new_worker")
         super(NewWorker, self).__init__(ui_file, parent, "workers")
         # my_pass
-        self.cb_auto.stateChanged.connect(self.ev_auto)
         self.cb_vac.activated[str].connect(self.change_vac)
         self.b_send_docs.clicked.connect(self.add_docs)
         self.b_tb.clicked.connect(self.create_tb)
@@ -43,6 +42,8 @@ class NewWorker(TempForm):
         self.my_mem = ""
         self.vac = True
         self.send_docs = True
+        self.init_docs()
+        self.b_ok.setEnabled(False)
 
     def check_(self, state):
         self.b_ok.setEnabled(state)
@@ -113,38 +114,54 @@ class NewWorker(TempForm):
                 self.cb_contract.setCurrentIndex(next(g))
                 break
 
-    def ev_auto(self, state):
-        if state == 2:
-            number = list()
-            card = list()
-            i = 0
-            for worker in self.rows_from_db:
-                print((i, worker))
-                number.append(int(worker[20]))
-                card.append(int(worker[21]))
-            delta = 1 if dt.datetime.now().weekday() >= 1 else 3
-            date = dt.datetime.now().date() - dt.timedelta(delta)
-            if not number:
-                number.append(0)
-                card.append(0)
-            self.auto_numbers = max(number), max(card), str(date)
-            self.n_prot.setText(str(max(number) + 1))
-            self.n_card.setText(str(max(card) + 1))
-            self.d_prot.setDate(from_str(str(date)))
-
-            self.n_prot.setEnabled(False)
-            self.n_card.setEnabled(False)
-            self.d_prot.setEnabled(False)
-        else:
-            self.n_prot.setEnabled(True)
-            self.n_card.setEnabled(True)
-            self.d_prot.setEnabled(True)
-
     def create_tb(self):
         TB = CreateTB(self)
         TB.exec_()
         ok = msg_info(self, "Протоколы по ОТ, ЭБ и ПТМ успешно созданы!")
         return ok
+
+    def init_docs(self):
+        list_docs = [[], [], []]
+        for people in self.rows_from_db:
+            val_1 = people[20]
+            if not val_1 in list_docs[0]:
+                list_docs[0].append(val_1)
+
+            val_2 = people[14]
+            if not val_2 in list_docs[1]:
+                list_docs[1].append(val_2)
+
+            val_3 = people[17]
+            if not val_3 in list_docs[2]:
+                list_docs[2].append(val_3)
+        cb_ = iter([self.cb_docs, self.cb_h, self.cb_st])
+        meths = iter([self.select_docs, self.select_h, self.select_st])
+        for docs in list_docs:
+            docs.sort()
+            item = next(cb_)
+            item.activated[str].connect(next(meths))
+            for doc in docs:
+                item.addItem(doc)
+
+    def select_h(self):
+        self.select_doc(self.n_hght, self.d_height, 14)
+
+    def select_docs(self):
+        self.select_doc(self.n_prot, self.d_prot, 20)
+
+    def select_st(self):
+        self.select_doc(self.n_study, self.d_study, 17)
+
+    def select_doc(self, wgt_n, wgt_d, ind):
+        doc = self.sender().currentText()
+        if doc == NOT:
+            return
+
+        wgt_n.setText(doc)
+        for people in self.rows_from_db:
+            if people[ind] == doc:
+                wgt_d.setDate(from_str(people[ind + 2]))
+                return
 
 
 class CreateTB(QDialog):

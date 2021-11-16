@@ -15,6 +15,7 @@ class TempPass(QDialog):
         if not self.check_start(ui_file):
             return
         self.table = table
+        self.db = DataBase(self)
         # my_pass
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.close)

@@ -7,7 +7,7 @@ from database import *
 class NewMaterial(TempForm):
     def __init__(self, parent=None):
         self.conf = Ini(self)
-        ui_file = self.conf.get_ui("materials")
+        ui_file = self.conf.get_ui("new_materials")
         super(NewMaterial, self).__init__(ui_file, parent, "materials")
         self.b_change.setText("Добавить")
         self.b_ok.setText("Создать")

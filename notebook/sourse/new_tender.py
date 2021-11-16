@@ -7,16 +7,14 @@ import os
 from database import *
 
 
-class TempForm (QDialog):
-    def __init__(self, ui_file, parent, table):
-        super(TempForm, self).__init__()
+class NewTender(QDialog):
+    def __init__(self, parent):
+        super(NewTender, self).__init__()
         self.status_ = True
         self.conf = Ini(self)
-        self.path_ = ui_file
-        if self.check_start(ui_file) == ERR:
-            return
+        ui_files = self.conf.get_ui("new_tender")
         self.parent = parent
-        self.table = table
+        self.table = TENDERS
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.close)
         self.b_kill.clicked.connect(self.ev_kill)

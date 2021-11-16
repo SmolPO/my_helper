@@ -15,7 +15,8 @@ from covid19 import NewCovid
 from table import NewTable
 from pdf_module import PDFModule
 from new_contract import NewContact
-from material import NewMaterial
+from new_material import NewMaterial
+from new_tool import NewTool
 from new_TB import NewTB
 from acts import Acts
 from my_email import *
@@ -25,6 +26,7 @@ from pass_month import MonthPass
 from pass_get import GetPass
 from pass_auto import AutoPass
 from pass_drive import DrivePass
+from pass_tools import ToolsPass
 from pass_dt import DTPass
 from settings import Settings
 from database import *
@@ -41,16 +43,20 @@ from get_money import GetMoney
 + 7. Путевые листы (в меню) - 30 мин +
 8. Расширить работу в выходные на N чел (придумать как, скорее вбок добавлять) - 1 час
 9. Дизаин формочек (разобрать как дизайнить) - 1 час
-10. Проверка работы (тестирование) - 2 часа
++ 10. Проверка работы (тестирование) - 2 часа
 - 11. Исходящие в другие заводы (добавление папки, ведение коммерческих, добавление доков) - 1 час
 - 12. Папка на тендер (сформировать) - 1 час +
 13. Вакциная (решить с границами как задать) - 2 часа
 + 14. порядок в папке +
 + 15. сортировка списков +
-16. Магический список 
++ 16. Магический список 
 + 17. Организация босса +
 + 18. Автоматическое формирование списка по объекту.
 + 19. Дизаин окон (2)
+20. Добавить выбор протокола
++ 21. Дизайн формы Сотрудника
++ 22. Создание ТБ
++ 23. Печать ТБ
 Итого 26 часов, реально 20 часов - 2 полных дня.
 Сделать
  """
@@ -115,7 +121,8 @@ class MainWindow(QMainWindow):
         self.b_pdf_check.clicked.connect(self.start_wnd)
         self.b_journal.clicked.connect(self.start_wnd)
         self.b_tabel.clicked.connect(self.start_wnd)
-
+        self.b_new_tool.clicked.connect(self.start_wnd)
+        self.b_tools.clicked.connect(self.start_wnd)
         exitAction = QAction('Настройки', self)
         exitAction.setStatusTip('Настройки')
         sqlAction = QAction('Запрос в базу данных', self)
@@ -140,7 +147,6 @@ class MainWindow(QMainWindow):
         self.b_travel.clicked.connect(self.travel)
         self.b_dt.clicked.connect(self.get_dt)
         self.b_some.clicked.connect(self.start_file)
-        self.b_tools.setEnabled(False)
         self.b_tb.setEnabled(True)
         self.b_act.setEnabled(False)
         self.b_plan.setEnabled(False)
@@ -212,26 +218,30 @@ class MainWindow(QMainWindow):
         name = self.sender().text()
         _wnd = ""
         trans = {"workers": "рабочих", "auto": "авто", "contracts": "договоры"}
-        forms = {"Продление на месяц": (MonthPass, "workers"),
-                 "Пропуск на выходные": (WeekPass, "workers"),
-                 "Разблокировка пропуска": (UnlockPass, "workers"),
-                 "Ввоз материалов": (NewMaterial, "contracts"),
-                 "Выдать пропуск": (GetPass, "workers"),
-                 "Продление на машину": (AutoPass, "auto"),
+
+        forms = {"Продление на месяц": (MonthPass, WORKERS),
+                 "Пропуск на выходные": (WeekPass, WORKERS),
+                 "Разблокировка пропуска": (UnlockPass, WORKERS),
+                 "Материал": (NewMaterial, CONTRACTS),
+                 "Инструмент": (NewTool, CONTRACTS),
+                 "Выдать пропуск": (GetPass, WORKERS),
+                 "Продление на машину": (AutoPass, AUTO),
                  "Блокнот": (Notepad, None),
                  "Сайты": (Web, None),
-                 "Исполнительная": (Acts, "contracts"),
+                 "Исполнительная": (Acts, CONTRACTS),
                  "Сканер": (PDFModule, None),
                  "Автомобиль": (NewAuto, None),
                  "Заказчик": (NewCompany, None),
-                 "Договор": (NewContact, "company"),
+                 "Договор": (NewContact, COMPANY),
                  "Водитель": (NewDriver, None),
-                 "Босс": (NewBoss, "company"),
-                 "Сотрудник": (NewWorker, "contracts"),
+                 "Босс": (NewBoss, COMPANY),
+                 "Сотрудник": (NewWorker, CONTRACTS),
                  "Прораб": (NewITR, None),
                  "Чек": (NewBill, None),
                  "Заявка на деньги": (GetMoney, None),
-                 "Разовый пропуск": (DrivePass, "contracts")}
+                 "Разовый пропуск": (DrivePass, CONTRACTS),
+                 "Ввоз инстр-ов": (ToolsPass, TOOLS)}
+
         _wnd = forms.get(name, "")
         if _wnd:
             if _wnd[1]:
@@ -257,6 +267,7 @@ class MainWindow(QMainWindow):
             wnd = NewTB(self)
             set_fix_size(wnd)
             wnd.exec_()
+            return
         elif name == "Журнал-ковид":
             wnd = NewCovid(self)
             set_fix_size(wnd)

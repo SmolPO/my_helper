@@ -1,6 +1,7 @@
 from inserts import *
 import psycopg2
 import win32print
+from itertools import chain
 import datetime as dt
 from configparser import ConfigParser
 from PyQt5.QtCore import QDate as Date
@@ -75,6 +76,8 @@ DRIVERS = "drivers"
 BOSSES = "bosses"
 COMPANY = "company"
 CONTRACTS = "contracts"
+TOOLS = "tools"
+TENDERS = "tenders"
 
 ASR_FILE = "/asr.docx"
 JOURNAL_FILE = "/Журнал.docx"
@@ -110,7 +113,7 @@ def msg_q(widgets, text):
 
 
 class DataBase:
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         self.parent = parent
         self.conn = None
         self.cursor = None
@@ -391,3 +394,12 @@ def print_to(file, type_=TO_PAPER):
     win32print.SetDefaultPrinter(printer)
     os.startfile(file, "print")
 
+
+def add_unic_items(wgt, table, key):
+    rows = DataBase().get_data(key, table)
+    added = list()
+    for item in rows:
+        if not item[0] in added:
+            added.append(item)
+            for item in wgt:
+                item.addItem(item[0])
