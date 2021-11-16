@@ -1,11 +1,8 @@
-from PyQt5.QtWidgets import QMessageBox as mes
-from PyQt5.QtWidgets import QDialog, QCheckBox, QLabel
+from PyQt5.QtWidgets import QDialog
 from PyQt5 import uic
 import docx
 import docxtpl
 from database import *
-types_docs = {"1": "/ot_doc.docx", "2": "/ptm_doc.docx", "3": "/eb_doc.docx"}
-types_card = {"1": "/ot_card.docx", "2": "/ptm_card.docx", "3": "/es_card.docx"}
 
 
 class NewTB(QDialog):
@@ -36,8 +33,6 @@ class NewTB(QDialog):
         if ERR in rows:
             return
         self.all_people = rows[0] + rows[1]
-        self.path["main_folder"] = self.conf.get_path("pat_tb")
-        self.path["print_folder"] = self.conf.get_path("tb")
         self.list_ui = list()
         self.init_list()
 
@@ -80,108 +75,75 @@ class NewTB(QDialog):
 
     def ev_ok(self):
         people = self.get_list_people()
-        if self.create_protocols(people) == ERR:
-            return
-        if self.create_cards(people) == ERR:
-            return
+        self.print_prots(people)
+        self.print_study(people)
+        self.print_height(people)
+        self.create_table(people)
+        self.print_cards(people)
         return True
 
     def ev_cancel(self):
         self.close()
 
-    def create_protocols(self, people):
-        printed_docs = list()
-        worker = list()
-        fields = [0, 1, 2, 4, 20, 21, 22, 24]
-        _key = 20
-        for man in people:
-            if not man[_key] in printed_docs:
-                for field in fields:
-                    worker.append(man[field])
-                for key in types_docs.keys():
-                    if self.print_doc(worker, key) == ERR:
-                        return ERR
-                printed_docs.append(man[_key])
-        return
-    
-    def create_cards(self, people):
-        data = dict()
-        for worker in people:
-            data["family"] = " ".join(worker[:3])
-            data["post"] = worker[3]
-            data["number_doc"] = worker[20]
-            data["number"] = worker[21]
-            data["date"] = worker[22]
-            for name in types_card.keys():
-                try:
-                    path = self.path["main_folder"] + types_card[name]
-                    doc = docxtpl.DocxTemplate(path)
-                    doc.render(self.data)
-                    path = self.path["print_folder"] + types_card[name]
-                    doc.save(path)
-                    os.startfile(path, "print")
-                except:
-                    return msg_er(self, GET_FILE + path)
-                self.close()
+    def create_table(self, list_people):
+        list_people = [[]]
+        list_people.sort(key=lambda x: x[0][0])
+        path = self.conf.get_path("pat_tb") + "/Инструктаж" + DOCX
+        doc = docx.Document(path)
+        for people in list_people:
+            i = next(range(1, len(list_people) + 1))
+            doc.tables[0].add_row()
+            doc.tables[0].rows[i].cells[0].text = str(i)
+            doc.tables[0].rows[i].cells[1].text = full_name(people)  # ФИО
+            doc.tables[0].rows[i].cells[2].text = people[4]  # профессия
+            doc.tables[0].rows[i].cells[3].text = "Удосторение №" + people[18]
+            doc.tables[0].rows[i].cells[4].text = "Договор №" + people[12] + " от " + people[13]
+            doc.tables[0].rows[i].cells[5].text = "Выписка из протокола №" + people[17] + " от " + people[19]
+            doc.tables[0].rows[i].cells[6].text = people[20] + "/2 от " + people[22]
+            doc.tables[0].rows[i].cells[7].text = people[20] + "/1 от " + people[22]
+            doc.tables[0].rows[i].cells[8].text = "Допуск на высоту 2 группа (Протокол №" + \
+                                                  people[14] + " от " + people[16] + \
+                                                  ") Протокол по проверки знаний по электробезопасности " + \
+                                                  people[20] + " от " + people[22]
+        path = self.conf.get_path("tb") + "/Инструктажи/" + str(dt.datetime.now().date()) + DOCX
+        doc.save(path)
+        print_to(path)
 
-    def print_doc(self, workers, number_type):
-        data = dict()
-        data["date"] = workers[7] + "/" + str(number_type)  # номер столбца с датой
-        data["number_doc"] = workers[6]  # номер протокол
-        self.create_table(workers, number_type)
-        try:
-            path = self.path["main_folder"] + types_docs[number_type]
-            doc = docxtpl.DocxTemplate(path)
-            doc.render(self.data)
-            path = self.path["print_folder"] + types_docs[number_type]
-            doc.save(path)
-            os.startfile(self.print_file)
-        except:
-            return msg_er(self, GET_FILE + path)
+    def print_prots(self, list_people):
+        docs = list()
+        for people in list_people:
+            if not people[20] in docs:
+                docs.append(people[20])
+                for file in os.listdir(self.conf.get_path("tb_prot") + "/" + people[20]):
+                    os.startfile(file)
+                    ok = msg_info(self, "Открыть следующий документ?")
 
-    def create_table(self, data, number_type):
-        g = iter(range(len(data)))
-        try:
-            path = self.path["main_folder"] + types_docs[number_type]
-            doc = docx.Document(path)
-            for item in data:
-                i = next(g)
-                doc.tables[0].add_row()
-                doc.tables[0].rows[i].cells[0].text = str(i)
-                doc.tables[0].rows[i].cells[1].text = " ".join(item[:3]) # ФИО
-                doc.tables[0].rows[i].cells[2].text = item[3]   # профессия
-                doc.tables[0].rows[i].cells[3].text = "Сдал №" + item[5]
-            path = self.path["print_folder"] + types_docs[number_type]
-            doc.save(path)
-        except:
-            return msg_er(self, GET_FILE + path)
+    def print_study(self, list_people):
+        docs = list()
+        for people in list_people:
+            if not people[20] in docs:
+                docs.append(people[20])
+                path = self.conf.get_path("tb_study") + "/" + people[18] + DOCX
+                os.startfile(path)
+                ok = msg_info(self, "Открыть следующий документ?")
+        ok = msg_info(self, "Протоколы на профессии готовы!")
 
+    def print_height(self, list_people):
+        docs = list()
+        for people in list_people:
+            if not people[20] in docs:
+                docs.append(people[14])
+                path = self.conf.get_path("tb_height") + "/" + people[14] + DOCX
+                os.startfile(path)
+                ok = msg_info(self, "Открыть следующий документ?")
+        ok = msg_info(self, "Протоколы на высоту готовы!")
 
-class CountPeople(QDialog):
-    def __init__(self, parent=None):
-        self.status_ = True
-        self.conf = Ini(self)
-        ui_file = self.conf.get_ui("count")
-        super(CountPeople, self).__init__(parent)
-        uic.loadUi(ui_file, self)
-
-        self.parent = parent
-        self.table = "workers"
-        self.b_ok.clicked.connect(self.ev_ok)
-        self.b_cancel.clicked.connect(self.ev_cancel)
-        count_people = len(self.parent.db.get_data("*", self.table))
-        if count_people == ERR:
-            return
-        self.count.setMaximum(count_people)
-
-    def ev_ok(self):
-        self.parent.count_people_tb = self.count.value()
-        self.close()
-        return
-
-    def ev_cancel(self):
-        self.parent.count_people_tb = -1
-        self.close()
-
-
-
+    def print_cards(self, list_people):
+        ok = msg_info(self, "Печатаются личные карточки")
+        path = self.conf.get_path("pat_tb") + "/Личная карточка_1" + DOCX
+        for i in range(len(list_people)):
+            print_to(path)
+        ok = msg_info(self, "Положите повторно стопку личных карточек в принтер для печати обратной стороны")
+        path = self.conf.get_path("pat_tb") + "/Личная карточка_2" + DOCX
+        for i in range(len(list_people)):
+            print_to(path)

@@ -43,6 +43,7 @@ class TempPass(QDialog):
         if ERR in rows:
             return
         self.all_people = rows[0] + rows[1]
+        self.vac = False
 
     def check_start(self, ui_file):
         self.status_ = True
@@ -72,14 +73,15 @@ class TempPass(QDialog):
         self.data["company"] = self.parent.company
         if not self.check_input():
             return False
-        print_file = self.print_folder + "/" + self.number.text() + "_" + self.d_note.text() + ".docx"
-        path = self.main_file
-        doc = docxtpl.DocxTemplate(path)
-        doc.render(self.data)
-        path = print_file
-        doc.save(path)
         try:
-            pass
+            print_file = self.print_folder + "/" + self.number.text() + "_" + self.d_note.text() + ".docx"
+            path = self.main_file
+            doc = docxtpl.DocxTemplate(path)
+            doc.render(self.data)
+            path = print_file
+            doc.save(path)
+            if self.vac:
+                os.startfile(path)
         except:
             return msg_er(self, GET_FILE + path)
         if self._create_data(path) == ERR:
@@ -155,9 +157,13 @@ class TempPass(QDialog):
         for row in rows:
             if name in row:
                 self.data["contract"] = " от ".join(row[:2])
-                self.data["object_name"] = row[2]
+                self.data["object"] = row[2]
                 self.data["part"] = row[3]
-                self.data["type_work"] = row[4]
+                if "Ремонт" in row[4]:
+                    word = row[4].lower().replace("ремонт", "по ремонту")
+                else:
+                    word = row[4]
+                self.data["type_work"] = word
 
     def get_worker(self, family):
         rows = self.parent.db.get_data("family, name, surname, post, passport, "

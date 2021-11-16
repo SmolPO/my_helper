@@ -3,6 +3,7 @@ import sys
 import requests
 import zipfile
 import shutil
+import win32print
 from new_boss import NewBoss
 from new_itr import NewITR
 from new_worker import NewWorker
@@ -15,7 +16,7 @@ from table import NewTable
 from pdf_module import PDFModule
 from new_contract import NewContact
 from material import NewMaterial
-from new_TB import NewTB, CountPeople
+from new_TB import NewTB
 from acts import Acts
 from my_email import *
 from pass_week import WeekPass
@@ -179,11 +180,13 @@ class MainWindow(QMainWindow):
         count, ok = QInputDialog.getInt(self, "Кол-во копий", "Копий")
         if ok:
             for item in range(count):
-                os.startfile(self.conf.get_path("patterns") + "/Путевой_1.docx", "print")
+                file = self.conf.get_path("patterns") + "/Путевой_1.docx"
+                print_to(file)
             ok = msg_info(self, "Переверните распечатанную стопку и "
                                 "вставьте в принтер повторно для печати оборотной стороны")
             for item in range(count):
-                os.startfile(self.conf.get_path("patterns") + "/Путевой_2.docx", "print")
+                file = self.conf.get_path("patterns") + "/Путевой_2.docx"
+                print_to(file)
 
     def helpers(self):
         self.my_help = not self.my_help
@@ -251,18 +254,12 @@ class MainWindow(QMainWindow):
             else:
                 wnd = _wnd[0](self)
         elif name == "Распечатать ТБ":
-            self.count_people_tb = int()
-            wnd = CountPeople(self)
-            if not wnd.status_:
-                return
-            wnd.setFixedSize(wnd.geometry().width(), wnd.geometry().height())
+            wnd = NewTB(self)
+            set_fix_size(wnd)
             wnd.exec_()
-            if self.count_people_tb > 0:
-                wnd = NewTB(self)
-            else:
-                return
         elif name == "Журнал-ковид":
             wnd = NewCovid(self)
+            set_fix_size(wnd)
             wnd.create_covid()
             return
         elif name == "Табель":
@@ -294,22 +291,24 @@ class MainWindow(QMainWindow):
                  "Бирки на инстр.": "/Бирки.docx",
                  "Бланки на нар-ы": "/Бланки.jpg"}
         name = self.sender().text()
-        path = self.conf.get_path("pat_patterns") + files[name]
+        path = self.conf.get_path("pat_patterns")
         if name in ["Доверенность", "Накладная", "Бланки на нар-ы"]:
-            count, ok = QInputDialog.getInt(self, name, "Кол-во копий")
-            if ok:
-                for ind in range(count):
-                    try:
-                        os.startfile(path, "print")
-                    except:
-                        msg_info(self, GET_FILE + path)
+            if files[name][1:] in os.listdir(path):
+                path = path + files[name]
+                count, ok = QInputDialog.getInt(self, name, "Кол-во копий")
+                if ok:
+                    for ind in range(count):
+                        print_to(path, TO_PAPER)
+            else:
+                msg_info(self, GET_FILE + path)
+                return
         else:
+            path = path + files[name]
             try:
                 os.startfile(path)
             except:
                 msg_info(self, GET_FILE + path)
-        return
-
+            return
 
     def get_new_data(self, data):
         self.data_to_db = data
@@ -348,14 +347,17 @@ class MainWindow(QMainWindow):
         text, ok = QInputDialog.getText(self, "SQL запрос", "Введите запрос")
         if ok:
             if text:
+                self.db.execute(text)
                 try:
-                    self.db.execute(text)
+                    pass
                 except:
                     msg_info(self, "Запрос не удался")
                     return
                 file = open("text.txt", "w")
-
-                file.write(str(self.db.cursor.fetchall()))
+                try:
+                    file.write(str(self.db.cursor.fetchall()))
+                except:
+                    pass
 
 
 if __name__ == "__main__":

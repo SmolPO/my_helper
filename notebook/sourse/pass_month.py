@@ -10,12 +10,7 @@ class MonthPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_month")
-        if not ui_file or ui_file == ERR:
-            self.status_ = False
-            return
         super(MonthPass, self).__init__(ui_file, parent, "workers")
-        if not self.status_:
-            return
         self.count_people = 0
         self.d_from.setDate(dt.datetime.now().date())
         self.d_to.setDate(from_str(".".join([str(count_days[dt.datetime.now().month - 1]),
@@ -43,6 +38,9 @@ class MonthPass(TempPass):
         month = dt.datetime.now().month - 1
         for elem in self.list_month[month:]:
             self.cb_month.addItem(elem)
+        if self.cb_month.count() == 1:
+            self.cb_month.addItem(self.list_month[0])
+        self.cb_month.setCurrentIndex(1)
 
     def init_workers(self):
         for item in self.list_ui:

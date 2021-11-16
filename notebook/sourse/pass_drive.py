@@ -87,8 +87,12 @@ class DrivePass(TempPass):
             return ERR
         for row in rows:
             if self.cb_contracts.currentText() == row[0]:
-                self.work = " ".join(row[4:7])
-                self.contract = " от ".join(row[2:4])
+                if "ремонт" in row[4]:
+                    work = row[4].lower().replace("ремонт", "для ремонта ")
+                else:
+                    work = row[4].lower()
+                self.work = " ".join([row[5], work, row[6]])
+                self.contract = "по договору №" + " от ".join(row[2:4])
             if self.cb_contracts.currentText() == NOT:
                 self.work = ""
                 self.contract = ""

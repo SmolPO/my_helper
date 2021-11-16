@@ -1,6 +1,7 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QFileDialog
 from database import *
+import win32print
 from PyQt5.QtWidgets import QMessageBox as mes
 
 
@@ -46,13 +47,15 @@ class Settings(QDialog):
         self.path.setText(self.self.main_path)
 
     def get_data(self):
-        data = list()
-        data.append(self.path.text())
-        data.append(self.ip.text())
-        data.append(self.name_db.text())
-        data.append(self.user_db.text())
-        data.append(self.password_db.text())
-        data.append(str(self.new_year.value()))
+        data = dict()
+        data["path"] = self.path.text()
+        data["ip"] = self.ip.text()
+        data["dname"] = self.name_db.text()
+        data["duser"] = self.user_db.text()
+        data["password"] = self.password_db.text()
+        data["new_year"] = str(self.new_year.value())
+        data["to_paper"] = self.to_paper.text()
+        data["to_pdf"] = self.to_pdf.text()
         return data
 
     def init_data(self):
@@ -72,12 +75,14 @@ class Settings(QDialog):
         config = ConfigParser()
         try:
             config.read('config.ini')
-            config.set('path', 'path', str(data[0]))
-            config.set('database', 'ip', data[1])
-            config.set('database', 'name_db', data[2])
-            config.set('database', 'user_db', data[3])
-            config.set('database', 'password_db', data[4])
-            config.set('config', 'new_year', str(data[5]))
+            config.set('path', 'path', data["path"])
+            config.set('database', 'ip', data["ip"])
+            config.set('database', 'name_db', data["dname"])
+            config.set('database', 'user_db', data["duser"])
+            config.set('database', 'password_db', data["password"])
+            config.set('config', 'new_year', data["new_year"])
+            config.set('config', 'to_paper', data["to_paper"])
+            config.set('config', 'to_pdf', data["to_pdf"])
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
         except:

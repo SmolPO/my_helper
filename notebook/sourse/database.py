@@ -1,5 +1,6 @@
 from inserts import *
 import psycopg2
+import win32print
 import datetime as dt
 from configparser import ConfigParser
 from PyQt5.QtCore import QDate as Date
@@ -81,6 +82,10 @@ PDF = ".pdf"
 UI = ".ui"
 XLSX = ".xlsx"
 DOCX = ".docx"
+
+TO_PDF = "to_pdf"
+TO_PAPER = "to_paper"
+
 dictionary = {"Производитель работ": {"gent": "производителя работ", "datv": "производителю работ"},
               "Технический директор": {"gent": "технического директора", "datv": "техническому директору"}}
 path_log = os.getcwd() + "/log_file.log"
@@ -95,8 +100,8 @@ def msg_er(widgets, text):
     return -1
 
 
-def msg_info(widgets, text):
-    mes.question(widgets, "Сообщение", text, mes.Ok)
+def msg_info(widgets, text, btn=mes.Ok):
+    mes.question(widgets, "Сообщение", text, btn)
     return True
 
 
@@ -137,6 +142,7 @@ class DataBase:
     def get_data(self, fields, table):
         try:
             row = get_from_db(fields, table)
+            self.connect_to_db()
             self.execute(row)
             rows = self.cursor.fetchall()
             man = []
@@ -150,14 +156,17 @@ class DataBase:
             return msg_er(self.parent, GET_DB)
 
     def execute(self, text):
+        self.connect_to_db()
+        self.cursor.execute(text)
         try:
-            self.cursor.execute(text)
+            pass
         except:
             return msg_er(self.parent, GET_DB)
         return True
 
     def get_next_id(self, table):
         try:
+            self.connect_to_db()
             rows = self.get_data("id", table)
             if not rows:
                 return 1
@@ -197,6 +206,7 @@ class DataBase:
 
     def my_update(self, data, table):
         try:
+            self.connect_to_db()
             self.cursor.execute(my_update(data, table))
             self.conn.commit()
         except:
@@ -204,6 +214,7 @@ class DataBase:
 
     def kill_value(self, my_id, table):
         try:
+            self.connect_to_db()
             self.execute("DELETE FROM {0} WHERE id = '{1}'".format(table, my_id))
             self.conn.commit()
         except:
@@ -372,4 +383,11 @@ def get_index(cb, text):
 
 def set_fix_size(wnd):
     wnd.setFixedSize(wnd.geometry().width(), wnd.geometry().height())
+
+
+def print_to(file, type_=TO_PAPER):
+    conf = Ini("")
+    printer = conf.get_config(type_)
+    win32print.SetDefaultPrinter(printer)
+    os.startfile(file, "print")
 

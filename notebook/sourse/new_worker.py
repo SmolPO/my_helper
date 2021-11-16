@@ -150,71 +150,129 @@ class NewWorker(TempForm):
 class CreateTB(QDialog):
     def __init__(self, parent=None):
         self.status_ = True
+        self.parent = parent
         self.conf = Ini(self)
-        ui_file = self.conf.get_ui("create_prots")
+        ui_file = self.conf.get_ui("new_tb")
         super(CreateTB, self).__init__()
         uic.loadUi(ui_file, self)
+        self.list_ui = [self.worker_1, self.worker_2, self.worker_3, self.worker_4, self.worker_5,
+                        self.worker_6, self.worker_7, self.worker_8, self.worker_9, self.worker_10,
+                        self.worker_11, self.worker_12, self.worker_13, self.worker_14, self.worker_15,
+                        self.worker_16, self.worker_17, self.worker_18, self.worker_19, self.worker_20,
+                        self.worker_21, self.worker_22, self.worker_23, self.worker_24, self.worker_25,
+                        self.worker_26, self.worker_27, self.worker_28, self.worker_29, self.worker_30]
+        self.list_cb = [NOT for i in range(len(self.list_ui))]
+        self.all_people = self.parent.parent.db.get_data(ALL, WORKERS)
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.close)
-        self.cb_all.stateChanged.connect(self.all)
         self.parent = parent
         self.conf = Ini(self)
         self.number = ""
         self.path = ""
         self.count = 0
-        self.list.setValidator(QREVal(QRE("[0-9,]{20}")))
+        self.init_workers()
 
-        pass
+    def init_workers(self):
+        for item in self.list_ui:
+            item.addItem(NOT)
+            item.activated[str].connect(self.new_worker)
+            item.setEnabled(False)
+        self.list_ui[0].setEnabled(True)
+        self.all_people.sort()
+        workers = list()
+        for item in self.all_people:
+            if "работает" in item[-2] or "в отпуске" in item[-2]:
+                workers.append(item)
+        workers.sort(key=lambda x: x[0])
+        for people in workers:
+            for item in self.list_ui:
+                item.addItem(short_name(people))
+
+    def add_item(self, people, ind):
+        for item in self.list_ui:
+            if self.list_ui.index(item) == ind:
+                continue
+            man = [item.itemText(i) for i in range(item.count())]
+            if not people == NOT:
+                man.append(people)
+            man.sort()
+            i = man.index(people)
+            item.insertItem(i, people)
+            print([item.itemText(i) for i in range(item.count())])
+
+    def kill_item(self, people, ind):
+        for item in self.list_ui:
+            if self.list_ui.index(item) == ind:
+                continue
+            for i in range(item.count()):
+                if item.itemText(i) == people:
+                    item.removeItem(i)
+                    break
+
+    def new_worker(self, some, man=None, indx=None):
+        if man:
+            val = man
+            ind = indx
+        else:
+            val = self.sender().currentText()
+            ind = self.list_ui.index(self.sender())
+        flag = True
+        if val == NOT:
+            if not self.list_cb[ind] == NOT:
+                self.add_item(self.list_cb[ind], ind)
+                self.list_cb[ind] = NOT
+        else:
+            self.kill_item(val, ind)
+            if self.list_cb[ind] != NOT:
+                self.add_item(self.list_cb[ind], ind)
+            self.list_cb[ind] = val
+
+        for item in self.list_ui:
+            if item.currentText() != NOT:
+                item.setEnabled(True)
+            else:
+                item.setEnabled(flag)
+                flag = False
 
     def ev_ok(self):
-        if self.cb_all.isChecked():
-            self.create_docs()
-        else:
-            numbers = set(self.list.text().split(","))
-            if numbers:
-                self.create_docs(numbers)
+        people = self.get_list_people()
 
-    def all(self, state):
-        self.list.setEnabled(not state)
+        dict_docs = self.create_dict(people, 18)
+        self.create_prot_docs(dict_docs)
+        self.create_prot_cards(dict_docs)
 
-    def create_docs(self, protocols=None):
-        numbers = set(self.get_list_new_protocols())
-        if protocols:
-            numbers = numbers.intersection(protocols)
-        dict_docs = self.create_dict(numbers)
-        self.create_protocols(dict_docs)
-        self.create_cards(dict_docs)
-        self.create_prof(dict_docs)
+        dict_docs = self.create_dict(people, 21)
+        self.create_study_docs(dict_docs)
 
-    def get_have_protocols(self):
-        files = os.listdir(self.parent.parent.conf.get_path("tb_prot"))
-        for file in files:
-            if ".ini" in file:
-                files.remove(file)
-        return files
+        dict_docs = self.create_dict(people, 15)
+        self.create_height_docs(dict_docs)
+        self.create_height_card(people)
 
-    def get_all_protocols(self):
-        people = self.parent.parent.db.get_data(ALL, WORKERS)
-        numbers = list()
-        for item in people:
-            if not item[20] in numbers:
-                numbers.append(item[20])
-        return numbers
+    def get_list_people(self):
+        list_people = list()
+        flag = False
+        for elem in self.list_ui:
+            family = elem.currentText()
+            if family != NOT:
+                item = self.check_row(family)
+                if item:
+                    list_people.append(item)
+            else:
+                if flag:
+                    return
+                flag = True
+        list_people.sort(key=lambda x: x[0])
+        return list_people
 
-    def get_list_new_protocols(self):
-        current = self.get_have_protocols()
-        in_db = self.get_all_protocols()
-        return set(current + in_db)
-
-    def create_dict(self, numbers):
-        people = self.parent.parent.db.get_data(ALL, WORKERS)
-        data = dict()
-        for doc in numbers:
-            data[doc] = list()
-            for item in people:
-                if item[20] == doc:
-                    data[doc].append(item)
-        return data
+    def check_row(self, row):
+        family = row.split(".")[0][:-2]
+        s_name = row.split(".")[0][-1]
+        s_sur = row.split(".")[1]
+        for item in self.all_people:
+            if family == item[0]:
+                if s_name == item[1][0]:
+                    if s_sur == item[2][0]:
+                        return item
 
     def get_date_doc(self):
         date = dt.datetime.today()
@@ -227,11 +285,11 @@ class CreateTB(QDialog):
             date = dt.datetime.now().date() - dt.timedelta(days=6-week)
         return str(".".join([str(date)[8:], str(date)[5:7], str(date)[:4]]))
 
-    def create_protocols(self, dict_data):
+    def create_prot_docs(self, dict_data):
         for number in dict_data.keys():
             self.number = number
             self.data = dict_data[number]
-            gen = self.create_table_prot()
+            gen = self.create_prot_table()
             next(gen)
             i = iter(range(1, 4))
             try:
@@ -251,7 +309,7 @@ class CreateTB(QDialog):
                 # os.startfile(self.path)
                 pass
 
-    def create_table_prot(self):
+    def create_prot_table(self):
         titles = iter(("ОТ-", "ПТМ-", "ЭБ-"))
         yield
         for title in titles:
@@ -268,7 +326,7 @@ class CreateTB(QDialog):
             doc.save(self.path)
             yield
 
-    def create_cards(self, dict_data):
+    def create_prot_cards(self, dict_data):
         titles = iter(("ОТ-", "ПТМ-", "ЭБ-"))
         for number in dict_data.keys():
             self.number = number
@@ -315,16 +373,24 @@ class CreateTB(QDialog):
                     target_document.add_paragraph(text)
                 yield
 
+    def find_all(self, number, ind):
+        workers = list()
+        for people in self.all_people:
+            if people[ind] == number:
+                workers.append(people)
+        pass
+
     # ____________ Профессия_____________
-    def create_dict_prof(self, list_people):
+    def create_dict(self, list_people, ind):
         numbers = list()
         dict_data = dict()
         for people in list_people:
             if not people[18] in numbers:
                 numbers.append(people[18])
-            dict_data[people[18]] = people
+                dict_data[people[18]] = self.find_all(people[18], 18)
+        return dict_data
 
-    def create_docs_prof(self, dict_data):
+    def create_study_docs(self, dict_data):
         for number in dict_data:
             data = dict()
             data["number"] = number
@@ -333,11 +399,11 @@ class CreateTB(QDialog):
             path = self.conf.get_path("pat_tb") + "/Профессия.docx"
             doc = docxtpl.DocxTemplate(path)
             doc.render(data)
-            self.path = self.conf.get_path("tb") + "/" + "Квалификационные/" + str(number) + DOCX
+            self.path = self.conf.get_path("tb_study") + "/" + str(number) + DOCX
             doc.save(self.path)
             self.create_table_prof(dict_data[number])
 
-    def create_table_prof(self, list_people):
+    def create_study_table(self, list_people):
         doc = docx.Document(self.path)
         for people in list_people:
             i = next(range(1, len(list_people) + 1))
@@ -351,15 +417,16 @@ class CreateTB(QDialog):
 
     # _________ Высота_____________
 
-    def create_height_prot(self, list_people):
+    def create_height_dict(self, list_people):
         numbers = list()
         dict_data = dict()
         for people in list_people:
             if not people[17] in numbers:
                 numbers.append(people[14])
             dict_data[people[14]] = people
+        return dict_data
 
-    def create_docs_height(self, dict_data):
+    def create_height_docs(self, dict_data):
         for number in dict_data:
             data = dict()
             data["number"] = number
@@ -367,11 +434,11 @@ class CreateTB(QDialog):
             path = self.conf.get_path("pat_tb") + "/Высота.docx"
             doc = docxtpl.DocxTemplate(path)
             doc.render(data)
-            self.path = self.conf.get_path("tb") + "/" + "Квалификационные/" + str(number) + DOCX
+            self.path = self.conf.get_path("tb_height") + str(number) + DOCX
             doc.save(self.path)
             self.create_table_height(dict_data[number])
 
-    def create_table_height(self, list_people):
+    def create_height_table(self, list_people):
         doc = docx.Document(self.path)
         for people in list_people:
             i = next(range(1, len(list_people) + 1))
@@ -386,7 +453,7 @@ class CreateTB(QDialog):
             doc.tables[0].rows[i].cells[7].text = "допущен"
         doc.save(self.path)
 
-    def create_card_height(self, list_people):
+    def create_height_card(self, list_people):
         for people in list_people:
             data = dict()
             data["card"] = people[15]
@@ -400,31 +467,6 @@ class CreateTB(QDialog):
             path = self.conf.get_path("pat_tb") + "/Высота_уд.docx"
             doc = docxtpl.DocxTemplate(path)
             doc.render(data)
-            self.path = self.conf.get_path("tb") + "/Высота/Уд_" + str(people[15]) + DOCX
+            self.path = self.conf.get_path("tb_height") + "/Уд_" + str(people[15]) + DOCX
             doc.save(self.path)
             pass
-
-    # __________ Инструктаж____________
-
-    def create_table(self, list_people):
-        list_people = [[]]
-        list_people.sort(key=lambda x: x[0][0])
-        path = self.conf.get_path("pat_tb") + "/Инструктаж" + DOCX
-        doc = docx.Document(path)
-        for people in list_people:
-            i = next(range(1, len(list_people) + 1))
-            doc.tables[0].add_row()
-            doc.tables[0].rows[i].cells[0].text = str(i)
-            doc.tables[0].rows[i].cells[1].text = full_name(people)  # ФИО
-            doc.tables[0].rows[i].cells[2].text = people[4]  # профессия
-            doc.tables[0].rows[i].cells[3].text = "Удосторение №" + people[18]
-            doc.tables[0].rows[i].cells[4].text = "Договор №" + people[12] + " от " + people[13]
-            doc.tables[0].rows[i].cells[5].text = "Выписка из протокола №" + people[17] + " от " + people[19]
-            doc.tables[0].rows[i].cells[6].text = people[20] + "/2 от " + people[22]
-            doc.tables[0].rows[i].cells[7].text = people[20] + "/1 от " + people[22]
-            doc.tables[0].rows[i].cells[8].text = "Допуск на высоту 2 группа (Протокол №" + \
-                                                  people[14] + " от " + people[16] + \
-                                                  ") Протокол по проверки знаний по электробезопасности " + \
-                                                  people[20] + " от " + people[22]
-        path = self.conf.get_path("tb") + "/Инструктажи/" + str(dt.datetime.now().date()) + DOCX
-        doc.save(path)

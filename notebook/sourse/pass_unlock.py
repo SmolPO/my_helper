@@ -13,12 +13,7 @@ class UnlockPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_unlock")
-        if not ui_file or ui_file == ERR:
-            self.status_ = False
-            return
         super(UnlockPass, self).__init__(ui_file, parent, "workers")
-        if not self.status_:
-            return
         self.parent = parent
         # my_pass
         self.d_from.setDate(dt.datetime.now().date())
@@ -35,6 +30,7 @@ class UnlockPass(TempPass):
         self.vac_path = self.parent.conf.get_path("pat_notes")
         self.main_file += "/Разблокировка.docx"
         self.count_days = 14
+        self.vac = True
 
     def init_workers(self):
         for people in self.all_people:
@@ -87,7 +83,7 @@ class UnlockPass(TempPass):
         note = ["Настоящим письмом информируем Вас о прохождение вакцинации от Covid-19 сотрудником ООО «Вертикаль»"]
         people = self.check_row(family)
         data_vac = people[-7:-2]
-        next_id = self.conf.set_next_number(int(self.number.value()) + 1)
+        next_id = self.conf.set_next_number(int(self.number.value()) + 2)
         if SPUTNIK in data_vac:
             self.vac_path += "/Вакцинация_3.docx"
         if SP_LITE in data_vac:
@@ -116,7 +112,7 @@ class UnlockPass(TempPass):
             data["date_doc"] = data_vac[0]
             data["num_doc"] = data_vac[2]
 
-        path = self.conf.get_path("notes_docs") + "/" + str(next_id) + "_" + self.d_note.text() + ".docx"
+        path = self.conf.get_path("notes_docs") + "/" + str(int(next_id) + 1) + "_" + self.d_note.text() + ".docx"
         doc.render(data)
         try:
             doc.save(path)

@@ -6,7 +6,7 @@ db_keys = {"auto": "(gov_number, brand, model, track_number, id)",
            "workers": "(family, name, surname, post, birthday, passport, passport_got, adr, live_adr, phone, inn, "
                       "snils, "
                       "numb_contract, date_contract, "
-                      "numb_h, numb_group_h, date_h, "
+                      "numb_h, numb_card_h, date_h, "
                       "numb_study, numb_study_card, d_study, "
                       "numb_protocol, numb_card, d_protocol, object, "
                       "d_vac_1, d_vac_2, place, vac_doc, vac_type, status, id)",
