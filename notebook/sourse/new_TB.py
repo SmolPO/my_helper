@@ -18,7 +18,6 @@ class NewTB(QDialog):
         if self.rows_from_db == ERR:
             self.status_ = False
             return
-        self.count = self.parent.count_people_tb
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.ev_cancel)
         self.path = dict()
@@ -33,8 +32,7 @@ class NewTB(QDialog):
         if ERR in rows:
             return
         self.all_people = rows[0] + rows[1]
-        self.list_ui = list()
-        self.init_list()
+        self.init_workers()
 
     def init_workers(self):
         for item in self.list_ui:
@@ -51,6 +49,52 @@ class NewTB(QDialog):
         for people in workers:
             for item in self.list_ui:
                 item.addItem(short_name(people))
+
+    def add_item(self, people, ind):
+        for item in self.list_ui:
+            if self.list_ui.index(item) == ind:
+                continue
+            man = [item.itemText(i) for i in range(item.count())]
+            if not people == NOT:
+                man.append(people)
+            man.sort()
+            i = man.index(people)
+            item.insertItem(i, people)
+            print([item.itemText(i) for i in range(item.count())])
+
+    def kill_item(self, people, ind):
+        for item in self.list_ui:
+            if self.list_ui.index(item) == ind:
+                continue
+            for i in range(item.count()):
+                if item.itemText(i) == people:
+                    item.removeItem(i)
+                    break
+
+    def new_worker(self, some, man=None, indx=None):
+        if man:
+            val = man
+            ind = indx
+        else:
+            val = self.sender().currentText()
+            ind = self.list_ui.index(self.sender())
+        flag = True
+        if val == NOT:
+            if not self.list_cb[ind] == NOT:
+                self.add_item(self.list_cb[ind], ind)
+                self.list_cb[ind] = NOT
+        else:
+            self.kill_item(val, ind)
+            if self.list_cb[ind] != NOT:
+                self.add_item(self.list_cb[ind], ind)
+            self.list_cb[ind] = val
+
+        for item in self.list_ui:
+            if item.currentText() != NOT:
+                item.setEnabled(True)
+            else:
+                item.setEnabled(flag)
+                flag = False
 
     def get_list_people(self):
         list_people = list()
@@ -107,26 +151,28 @@ class NewTB(QDialog):
                                                   people[20] + " от " + people[22]
         path = self.conf.get_path("tb") + "/Инструктажи/" + str(dt.datetime.now().date()) + DOCX
         doc.save(path)
-        print_to(path)
+        os.startfile(path)
 
     def print_prots(self, list_people):
         docs = list()
         for people in list_people:
             if not people[20] in docs:
                 docs.append(people[20])
-                for file in os.listdir(self.conf.get_path("tb_prot") + "/" + people[20]):
-                    os.startfile(file)
+                folder = self.conf.get_path("tb_prot") + "/" + people[20]
+                for file in os.listdir(folder):
+                    os.startfile(folder + "/" + file)
                     ok = msg_info(self, "Открыть следующий документ?")
 
     def print_study(self, list_people):
         docs = list()
         for people in list_people:
-            if not people[20] in docs:
-                docs.append(people[20])
-                path = self.conf.get_path("tb_study") + "/" + people[18] + DOCX
+            if not people[17] in docs:
+                docs.append(people[17])
+                number = people[17].replace("/", "_")
+                path = self.conf.get_path("tb_study") + "/" + number + DOCX
                 os.startfile(path)
                 ok = msg_info(self, "Открыть следующий документ?")
-        ok = msg_info(self, "Протоколы на профессии готовы!")
+        ok = msg_info(self, "Протоколы на профессий готовы!")
 
     def print_height(self, list_people):
         docs = list()

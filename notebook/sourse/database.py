@@ -252,7 +252,7 @@ class DataBase:
 
 
 class Ini:
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         self.parent = parent
         self.path_conf = os.getcwd() + "/config.ini"
         self.path_ui = os.getcwd() + "/ui_files/"
@@ -386,7 +386,7 @@ def set_fix_size(wnd):
 
 
 def print_to(file, type_=TO_PAPER):
-    conf = Ini("")
+    conf = Ini()
     printer = conf.get_config(type_)
     win32print.SetDefaultPrinter(printer)
     os.startfile(file, "print")

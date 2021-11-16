@@ -237,16 +237,17 @@ class CreateTB(QDialog):
     def ev_ok(self):
         people = self.get_list_people()
 
-        dict_docs = self.create_dict(people, 18)
+        dict_docs = self.create_dict(people, 14)
+        self.create_height_docs(dict_docs)
+        self.create_height_card(people)
+
+        dict_docs = self.create_dict(people, 20)
         self.create_prot_docs(dict_docs)
         self.create_prot_cards(dict_docs)
 
-        dict_docs = self.create_dict(people, 21)
+        dict_docs = self.create_dict(people, 17)
         self.create_study_docs(dict_docs)
-
-        dict_docs = self.create_dict(people, 15)
-        self.create_height_docs(dict_docs)
-        self.create_height_card(people)
+        self.close()
 
     def get_list_people(self):
         list_people = list()
@@ -259,7 +260,7 @@ class CreateTB(QDialog):
                     list_people.append(item)
             else:
                 if flag:
-                    return
+                    return list_people
                 flag = True
         list_people.sort(key=lambda x: x[0])
         return list_people
@@ -320,7 +321,7 @@ class CreateTB(QDialog):
                 doc.tables[0].add_row()
                 doc.tables[0].rows[i].cells[0].text = str(i)
                 doc.tables[0].rows[i].cells[1].text = full_name(item)  # ФИО
-                doc.tables[0].rows[i].cells[2].text = item[4]   # профессия
+                doc.tables[0].rows[i].cells[2].text = item[3]   # профессия
                 doc.tables[0].rows[i].cells[3].text = 'ООО "Вертикаль"'
                 doc.tables[0].rows[i].cells[4].text = "Сдал №" + title + item[21]
             doc.save(self.path)
@@ -339,7 +340,7 @@ class CreateTB(QDialog):
                 for people in dict_data[number]:
                     data = dict()
                     data["family"] = full_name(people)
-                    data["post"] = people[4]
+                    data["post"] = people[3]
                     data["n_doc"] = people[20] + "/" + part
                     data["number"] = title + people[21]
                     data["date"] = people[22]
@@ -349,6 +350,7 @@ class CreateTB(QDialog):
                     doc = docxtpl.DocxTemplate(path)
                     doc.render(data)
                     if flag:
+                        number = str(number).replace("/", "_")
                         path = self.conf.get_path("tb_prot") + "/" + str(number) + types_card[part]
                         flag = False
                         doc.save(path)
@@ -378,39 +380,40 @@ class CreateTB(QDialog):
         for people in self.all_people:
             if people[ind] == number:
                 workers.append(people)
-        pass
+        return workers
 
     # ____________ Профессия_____________
     def create_dict(self, list_people, ind):
         numbers = list()
         dict_data = dict()
         for people in list_people:
-            if not people[18] in numbers:
-                numbers.append(people[18])
-                dict_data[people[18]] = self.find_all(people[18], 18)
+            if not people[ind] in numbers:
+                numbers.append(people[ind])
+                dict_data[people[ind]] = self.find_all(people[ind], ind)
         return dict_data
 
     def create_study_docs(self, dict_data):
         for number in dict_data:
             data = dict()
             data["number"] = number
-            data["post"] = dict_data[number][0][4]
-            data["date"] = dict_data[number][0][20]
+            data["post"] = dict_data[number][0][3]
+            data["date"] = dict_data[number][0][19]
             path = self.conf.get_path("pat_tb") + "/Профессия.docx"
             doc = docxtpl.DocxTemplate(path)
             doc.render(data)
             self.path = self.conf.get_path("tb_study") + "/" + str(number) + DOCX
             doc.save(self.path)
-            self.create_table_prof(dict_data[number])
+            self.create_study_table(dict_data[number])
 
     def create_study_table(self, list_people):
         doc = docx.Document(self.path)
+        g = iter(range(1, len(list_people) + 1))
         for people in list_people:
-            i = next(range(1, len(list_people) + 1))
+            i = next(g)
             doc.tables[0].add_row()
             doc.tables[0].rows[i].cells[0].text = str(i)
             doc.tables[0].rows[i].cells[1].text = full_name(people)  # ФИО
-            doc.tables[0].rows[i].cells[2].text = people[4]  # профессия
+            doc.tables[0].rows[i].cells[2].text = people[3]  # профессия
             doc.tables[0].rows[i].cells[3].text = 'ООО "Вертикаль"'
             doc.tables[0].rows[i].cells[4].text = "Сдал №" + people[21]
         doc.save(self.path)
@@ -434,24 +437,30 @@ class CreateTB(QDialog):
             path = self.conf.get_path("pat_tb") + "/Высота.docx"
             doc = docxtpl.DocxTemplate(path)
             doc.render(data)
-            self.path = self.conf.get_path("tb_height") + str(number) + DOCX
+            self.path = self.conf.get_path("tb_height") +"/" + str(number) + DOCX
             doc.save(self.path)
-            self.create_table_height(dict_data[number])
+            self.create_height_table(dict_data[number])
 
     def create_height_table(self, list_people):
         doc = docx.Document(self.path)
+        g = iter(range(6, len(list_people) + 7))
         for people in list_people:
-            i = next(range(1, len(list_people) + 1))
+            i = next(g)
+            ind = iter(range(3, 9))
             doc.tables[0].add_row()
-            doc.tables[0].rows[i].cells[0].text = str(i)
-            doc.tables[0].rows[i].cells[1].text = full_name(people)  # ФИО
-            doc.tables[0].rows[i].cells[2].text = people[4]  # профессия
-            doc.tables[0].rows[i].cells[3].text = 'ООО "Вертикаль"'
-            doc.tables[0].rows[i].cells[4].text = "Сдал №" + people[21]
-            doc.tables[0].rows[i].cells[5].text = "2"  # профессия
-            doc.tables[0].rows[i].cells[6].text = "-"
-            doc.tables[0].rows[i].cells[7].text = "допущен"
+            a = doc.tables[0].cell(i, 1)
+            b = doc.tables[0].cell(i, 2)
+            cell = a.merge(b)
+            doc.tables[0].rows[i].cells[0].text = str(i - 5)
+            cell.text = full_name(people)
+            doc.tables[0].rows[i].cells[next(ind)].text = people[3]  # профессия
+            doc.tables[0].rows[i].cells[next(ind)].text = 'ООО "Вертикаль"'
+            doc.tables[0].rows[i].cells[next(ind)].text = "Сдал №" + people[21]
+            doc.tables[0].rows[i].cells[next(ind)].text = "2"  # профессия
+            doc.tables[0].rows[i].cells[next(ind)].text = "-"
+            doc.tables[0].rows[i].cells[next(ind)].text = "допущен"
         doc.save(self.path)
+        os.startfile(self.path)
 
     def create_height_card(self, list_people):
         for people in list_people:
@@ -467,6 +476,7 @@ class CreateTB(QDialog):
             path = self.conf.get_path("pat_tb") + "/Высота_уд.docx"
             doc = docxtpl.DocxTemplate(path)
             doc.render(data)
-            self.path = self.conf.get_path("tb_height") + "/Уд_" + str(people[15]) + DOCX
+            number = str(people[15]).replace("/", "_")
+            self.path = self.conf.get_path("tb_height") + "/Уд_" + number + DOCX
             doc.save(self.path)
             pass
