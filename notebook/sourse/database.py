@@ -410,13 +410,15 @@ def print_to(file, type_=TO_PAPER):
 def save_open(file):
     try:
         os.startfile(file)
+        return True
     except:
         return False
 
 
-def save_replace(target, sourсe):
+def save_replace(target, source):
     try:
-        os.replace(sourсe, target)
+        os.replace(source, target)
+
     except:
         return False
 
@@ -435,6 +437,7 @@ def save_save_doc(path, doc):
         return True
     except:
         return False
+
 
 def add_unic_items(wgt, table, key):
     rows = DataBase().get_data(key, table)

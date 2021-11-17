@@ -175,6 +175,7 @@ class MainWindow(QMainWindow):
             self.start_func()
             self.instruct()
             self.conf.set_val("config", "status", "worked")
+            self.main_path = os.getcwd()
         else:
             self.main_path = self.conf.get_from_ini("path", "path")
 

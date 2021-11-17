@@ -71,13 +71,14 @@ class Settings(QDialog):
             self.to_paper.setText(config.get('config', 'to_paper'))
             self.to_pdf.setText(config.get('config', 'to_pdf'))
         except:
-            return  msg_er(self, GET_INI)
+            return msg_er(self, GET_INI)
 
     def save_data(self, data):
         config = ConfigParser()
         try:
             config.read('config.ini')
             config.set('path', 'path', data["path"])
+            self.parent.main_path = data["path"]
             config.set('database', 'ip', data["ip"])
             config.set('database', 'name_db', data["dname"])
             config.set('database', 'user_db', data["duser"])
