@@ -41,7 +41,7 @@ class DrivePass(TempPass):
     # инициализация
     def init_drivers(self):
         self.cb_drivers.addItem(NOT)
-        people = self.parent.db.get_data("family, name", self.table)
+        people = self.parent.db.get_data("family, name", DRIVERS)
         if people == ERR or not people:
             return ERR
         for row in people:
@@ -49,7 +49,7 @@ class DrivePass(TempPass):
 
     def init_auto(self):
         self.cb_auto.addItem(NOT)
-        auto = self.parent.db.get_data("gov_number", "auto")
+        auto = self.parent.db.get_data("gov_number", AUTO)
         if auto == ERR or not auto:
             return ERR
         for row in auto:
@@ -57,7 +57,7 @@ class DrivePass(TempPass):
 
     def init_contracts(self):
         self.cb_contracts.addItem(NOT)
-        contracts = self.parent.db.get_data("name", "contracts")
+        contracts = self.parent.db.get_data("name", CONTRACTS)
         if contracts == ERR or not contracts:
             return ERR
         for row in contracts:
@@ -78,17 +78,13 @@ class DrivePass(TempPass):
         self.change_note()
 
     def contract_changed(self):
-        rows = self.parent.db.get_data("*", "contracts")
+        rows = self.parent.db.get_data(ALL, CONTRACTS)
         if rows == ERR or not rows:
             return ERR
         for row in rows:
             if self.cb_contracts.currentText() == row[0]:
-                if "ремонт" in row[4]:
-                    work = row[4].lower().replace("ремонт", "для ремонта ")
-                else:
-                    work = row[4].lower()
-                self.work = " ".join([row[5], work, row[6]])
-                self.contract = "по договору №" + " от ".join(row[2:4])
+                self.work = row[-3]
+                self.contract = " по договору №" + " от ".join(row[2:4])
             if self.cb_contracts.currentText() == NOT:
                 self.work = ""
                 self.contract = ""
@@ -102,8 +98,9 @@ class DrivePass(TempPass):
         text.append(self.parent.customer)
         text.append(" и ")
         text.append(self.input_text.toPlainText())
-        text.append(self.work)
+        text.append(" для выполнения работ")
         text.append(self.contract)
+        text.append(self.work)
         self.note.setText(" ".join(text))
 
     def manual_set(self, state):
@@ -119,7 +116,7 @@ class DrivePass(TempPass):
             self.cb_contracts.setEnabled(True)
 
     def auto_changed(self):
-        rows = self.parent.db.get_data("*", "auto")
+        rows = self.parent.db.get_data(ALL, AUTO)
         if rows == ERR or not rows:
             return ERR
         for row in rows:
@@ -129,7 +126,7 @@ class DrivePass(TempPass):
                 self.data["track"] = " " if row[-2] == NOT else "п/п " + row[-2]
 
     def driver_changed(self):
-        people = self.parent.db.get_data("*", self.table)
+        people = self.parent.db.get_data(ALL, DRIVERS)
         if people == ERR or not people:
             return ERR
         for row in people:

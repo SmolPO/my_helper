@@ -87,7 +87,7 @@ class TempPass(QDialog):
             return msg_er(self, GET_FILE + path)
         if self._create_data(path) == ERR:
             return
-        if self.conf.set_next_number(self.conf.get_next_number()) == ERR:
+        if self.conf.set_next_number(self.conf.get_next_number() + 1) == ERR:
             return
         os.startfile(path)
         self.close()
@@ -152,25 +152,19 @@ class TempPass(QDialog):
 
     def get_contract(self, name):
         # получить номер договора по короткому имени
-        rows = self.parent.db.get_data("number, date, object, place, type_work, name", "contracts")
+        rows = self.parent.db.get_data("number, date, datv, name", CONTRACTS)
         if rows == ERR:
             return ERR
         for row in rows:
             if name in row:
                 self.data["contract"] = " от ".join(row[:2])
-                self.data["object"] = row[2]
-                self.data["part"] = row[3]
-                if "Ремонт" in row[4]:
-                    word = row[4].lower().replace("ремонт", "по ремонту")
-                else:
-                    word = row[4]
-                self.data["type_work"] = word
+                self.data["work"] = row[2]
 
     def get_worker(self, family):
         rows = self.parent.db.get_data("family, name, surname, post, passport, "
-                                       "passport_got, birthday, adr,  live_adr, id", "workers") + \
+                                       "passport_got, birthday, adr,  live_adr, id", WORKERS) + \
                self.parent.db.get_data("family, name, surname, post, passport, "
-                                       "passport_got, birthday, adr,  live_adr, id", "itrs")
+                                       "passport_got, birthday, adr,  live_adr, id", ITRS)
         if rows == ERR:
             return ERR
         if family == "all":
@@ -181,8 +175,8 @@ class TempPass(QDialog):
 
     def get_worker_week(self, family):
         # получить номер договора по короткому имени
-        rows = self.parent.db.get_data("family, name, surname, post, passport, passport_got, "
-                                           "birthday, adr,  live_adr", "workers")
+        rows = self.parent.db.get_data("family, name, surname, post, passport, passport_got, " 
+                                       "birthday, adr,  live_adr", WORKERS)
         if rows == ERR:
             return ERR
         for row in rows:

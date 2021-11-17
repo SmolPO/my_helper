@@ -34,12 +34,12 @@ class NewCovid:
         try:
             doc = xlsx.open(path)
         except:
-            return msg_er(self, GET_FILE + path)
+            return msg_er(self.parent, GET_FILE + path)
         page = "covid"
         try:
             sheet = doc[page]
         except:
-            return msg_er(self, GET_PAGE + page)
+            return msg_er(self.parent, GET_PAGE + page)
         delta = 2
         count_column = 9
         for ind in range(1, 50):
@@ -57,4 +57,4 @@ class NewCovid:
             doc.save(path_save)
             print_to(path_save)
         except:
-            return msg_er(self, GET_FILE + path_save)
+            return msg_er(self.parent, GET_FILE + path_save)

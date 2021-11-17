@@ -42,9 +42,9 @@ class Settings(QDialog):
         self.main_path = QFileDialog.getExistingDirectory(self, "Open Directory", self.parent.main_path,
                                                           QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)
 
-        if not self.filename:
+        if not self.main_path:
             return
-        self.path.setText(self.self.main_path)
+        self.path.setText(self.main_path)
 
     def get_data(self):
         data = dict()
@@ -68,6 +68,8 @@ class Settings(QDialog):
             self.user_db.setText(config.get('database', 'user_db'))
             self.password_db.setText(config.get('database', 'password_db'))
             self.new_year.setValue(int(config.get('config', 'new_year')))
+            self.to_paper.setText(config.get('config', 'to_paper'))
+            self.to_pdf.setText(config.get('config', 'to_pdf'))
         except:
             return  msg_er(self, GET_INI)
 

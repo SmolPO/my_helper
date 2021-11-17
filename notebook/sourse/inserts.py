@@ -20,7 +20,7 @@ db_keys = {"auto": "(gov_number, brand, model, track_number, id)",
                    "st_protocol, st_card, st_date, birthday, "
                    " d_vac_1, d_vac_2, place, vac_doc, vac_type, status, id)",
            "contracts": "(name, customer, number, date, object, type_work, place, "
-                        "price, date_end, nds, avans, status, id)",
+                        "price, date_end, nds, avans, nomn, datv, status, id)",
            "company": "(company, adr, ogrn, inn, kpp, bik, korbill, rbill, bank, big_boss, "
                    "big_post, big_at, big_d_at, mng_boss, mng_post, mng_at, mng_d_at, status, id)",
            "bosses": "(family, name, surname, post, email, phone, sex, company, id)",
@@ -29,7 +29,9 @@ db_keys = {"auto": "(gov_number, brand, model, track_number, id)",
            "finance": "(date, value, recipient, comment, id)",
            "bills": "(date, value, buyer, name_file, comment, id)",
            "tools": "(name, count, codes, date, id)",
-           "tenders": "(name, customer, object, work, part, kp_1, out_1, d_out_1, kp_2, out_2, d_out_2, id)"}
+           "tenders": "(name, customer, object, work, part, "
+                      "kp_1, out_1, d_out_1, kp_2, out_2, d_out_2, "
+                      "nomn, datv, id)"}
 
 
 def get_person(person):

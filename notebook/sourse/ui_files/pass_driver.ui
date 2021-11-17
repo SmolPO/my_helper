@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>476</width>
-    <height>545</height>
+    <width>661</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>10</y>
-     <width>301</width>
+     <x>110</x>
+     <y>20</y>
+     <width>441</width>
      <height>30</height>
     </rect>
    </property>
@@ -32,12 +32,15 @@
    <property name="text">
     <string>Разовый пропуск на водителя</string>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
   <widget class="QPushButton" name="b_ok">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>460</y>
+     <x>520</x>
+     <y>540</y>
      <width>120</width>
      <height>30</height>
     </rect>
@@ -55,8 +58,8 @@
   <widget class="QPushButton" name="b_cancel">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>500</y>
+     <x>520</x>
+     <y>580</y>
      <width>120</width>
      <height>30</height>
     </rect>
@@ -74,8 +77,8 @@
   <widget class="QDateEdit" name="d_note">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>80</y>
+     <x>130</x>
+     <y>90</y>
      <width>121</width>
      <height>30</height>
     </rect>
@@ -90,8 +93,8 @@
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>50</y>
+     <x>130</x>
+     <y>60</y>
      <width>101</width>
      <height>30</height>
     </rect>
@@ -110,7 +113,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
+     <y>90</y>
      <width>91</width>
      <height>30</height>
     </rect>
@@ -129,7 +132,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>50</y>
+     <y>60</y>
      <width>49</width>
      <height>30</height>
     </rect>
@@ -144,35 +147,13 @@
     <string>Исх.:</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="b_open">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>500</y>
-     <width>120</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Times New Roman</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Открыть</string>
-   </property>
-  </widget>
   <widget class="QTextEdit" name="input_text">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>200</y>
-     <width>431</width>
-     <height>61</height>
+     <y>160</y>
+     <width>621</width>
+     <height>101</height>
     </rect>
    </property>
    <property name="font">
@@ -193,7 +174,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>170</y>
+     <y>130</y>
      <width>91</width>
      <height>30</height>
     </rect>
@@ -208,52 +189,11 @@ p, li { white-space: pre-wrap; }
     <string>Текст письма</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="cb_pattern">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>140</y>
-     <width>141</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Times New Roman</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_10">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>110</y>
-     <width>91</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Times New Roman</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Шаблон</string>
-   </property>
-  </widget>
   <widget class="QComboBox" name="cb_contracts">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>140</y>
+     <x>410</x>
+     <y>90</y>
      <width>131</width>
      <height>30</height>
     </rect>
@@ -268,8 +208,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QDateEdit" name="d_arrive">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>140</y>
+     <x>270</x>
+     <y>90</y>
      <width>121</width>
      <height>30</height>
     </rect>
@@ -284,8 +224,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label_11">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>110</y>
+     <x>410</x>
+     <y>60</y>
      <width>131</width>
      <height>30</height>
     </rect>
@@ -303,8 +243,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label_12">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>110</y>
+     <x>270</x>
+     <y>60</y>
      <width>91</width>
      <height>30</height>
     </rect>
@@ -327,8 +267,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>20</x>
      <y>270</y>
-     <width>431</width>
-     <height>141</height>
+     <width>621</width>
+     <height>221</height>
     </rect>
    </property>
    <property name="font">
@@ -348,8 +288,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QComboBox" name="cb_auto">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>440</y>
+     <x>170</x>
+     <y>540</y>
      <width>150</width>
      <height>30</height>
     </rect>
@@ -364,8 +304,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QComboBox" name="cb_drivers">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>500</y>
+     <x>340</x>
+     <y>540</y>
      <width>150</width>
      <height>30</height>
     </rect>
@@ -380,8 +320,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>410</y>
+     <x>170</x>
+     <y>510</y>
      <width>91</width>
      <height>30</height>
     </rect>
@@ -399,8 +339,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>470</y>
+     <x>340</x>
+     <y>510</y>
      <width>91</width>
      <height>30</height>
     </rect>
@@ -418,8 +358,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QCheckBox" name="cb_activ">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>420</y>
+     <x>520</x>
+     <y>500</y>
      <width>101</width>
      <height>30</height>
     </rect>

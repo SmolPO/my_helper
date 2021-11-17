@@ -6,6 +6,7 @@ import datetime as dt
 from configparser import ConfigParser
 from PyQt5.QtCore import QDate as Date
 import logging
+import docxtpl
 from PyQt5.QtWidgets import QMessageBox as mes
 from inserts import db_keys
 import os
@@ -81,6 +82,7 @@ TENDERS = "tenders"
 BILLS = "bills"
 FINANCE = "finance"
 MATERIALS = "materials"
+LINKS = "links"
 
 ASR_FILE = "/asr.docx"
 JOURNAL_FILE = "/Журнал.docx"
@@ -403,12 +405,37 @@ def print_to(file, type_=TO_PAPER):
         pass
 
 
+# _________ Безопасные функции ___________
+
+
 def save_open(file):
     try:
         os.startfile(file)
     except:
         return False
 
+
+def save_replace(target, sourсe):
+    try:
+        os.replace(sourсe, target)
+    except:
+        return False
+
+
+def save_open_docxtpl(path):
+    try:
+        doc = docxtpl.DocxTemplate(path)
+        return doc
+    except:
+        return False
+
+
+def save_save_doc(path, doc):
+    try:
+        doc.save(path)
+        return True
+    except:
+        return False
 
 def add_unic_items(wgt, table, key):
     rows = DataBase().get_data(key, table)

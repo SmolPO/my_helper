@@ -15,6 +15,7 @@ class NewTender(QDialog):
         super(NewTender, self).__init__()
         self.status_ = True
         self.conf = Ini(self)
+        self.table = TENDERS
         ui_files = self.conf.get_ui("new_tender")
         uic.loadUi(ui_files, self)
         self.parent = parent
@@ -28,7 +29,8 @@ class NewTender(QDialog):
         self.b_open.clicked.connect(self.open_folder)
         self.list_ui = [self.name, self.customer, self.object, self.work, self.part,
                         self.kp_1, self.out_1, self.d_out_1,
-                        self.kp_2, self.out_2, self.d_out_2]
+                        self.kp_2, self.out_2, self.d_out_2,
+                        self.nomn, self.datv]
         self.cb_select.activated[str].connect(self.ev_select)
         self.but_status("add")
         self.rows_from_db = self.parent.db.get_data(ALL, TENDERS)
@@ -171,7 +173,7 @@ class NewTender(QDialog):
         data["out"] = self.out_1.text()
         data["d_out"] = self.d_out_1.text()
         data["price"] = self.kp_1.text()
-        data["work"] = " ".join([self.object.toPlainText(), self.work.toPlainText(), self.part.text()])
+        data["work"] = self.datv.toPlainText()
         for key in data.keys():
             if not data[key] or data[key] == ZERO:
                 msg_info(self, FULL_ALL)
@@ -191,7 +193,7 @@ class NewTender(QDialog):
         data["d_out"] = self.d_out_2.text()
         data["price"] = self.kp_2.text()
         data["sale"] = " с учетом максимальной возможной скидки "
-        data["work"] = " ".join([self.object.text(), self.work.text(), self.part.text()])
+        data["work"] = self.datv.toPlainText()
         path = self.conf.get_path("pat_notes") + "/КП.docx"
         doc = docxtpl.DocxTemplate(path)
         doc.render(data)

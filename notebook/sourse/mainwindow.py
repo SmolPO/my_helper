@@ -31,6 +31,7 @@ from pass_tools import ToolsPass
 from pass_dt import DTPass
 from settings import Settings
 from database import *
+from consts import *
 from my_tools import Notepad
 from music import Web
 from get_money import GetMoney
@@ -74,8 +75,8 @@ class Instruct(QDialog):
         self.b_print.clicked.connect(self.my_print)
 
     def my_print(self):
-        if not save_open(os.getcwd() + "/Инструкция.docx"):
-            msg_er(self, GET_FILE + os.getcwd() + "/Инструкция.docx")
+        if not save_open(os.getcwd() + INSTUCTION):
+            msg_er(self, GET_FILE + os.getcwd() + INSTUCTION)
             return False
 
 
@@ -95,7 +96,7 @@ class MainWindow(QMainWindow):
         if check == "NO":
             if self.db.create_db() == ERR:
                 return
-            if self.conf.set_val("config", "is_created_db", "YES") == ERR:
+            if self.conf.set_val("config", "is_created_db", YES) == ERR:
                 return
         self.check_start()
         self.b_pass_week.clicked.connect(self.start_wnd)
@@ -187,13 +188,15 @@ class MainWindow(QMainWindow):
         count, ok = QInputDialog.getInt(self, "Кол-во копий", "Копий")
         if ok:
             for item in range(count):
-                file = self.conf.get_path("patterns") + "/Путевой_1.docx"
-                print_to(file)
+                file = self.conf.get_path("patterns") + TRAVEL_1
+                if not print_to(file):
+                    return msg_info(self, GET_FILE + file)
             ok = msg_info(self, "Переверните распечатанную стопку и "
                                 "вставьте в принтер повторно для печати оборотной стороны")
             for item in range(count):
-                file = self.conf.get_path("patterns") + "/Путевой_2.docx"
-                print_to(file)
+                file = self.conf.get_path("patterns") + TRAVEL_2
+                if not print_to(file):
+                    return msg_info(self, GET_FILE + file)
 
     def helpers(self):
         self.my_help = not self.my_help
@@ -255,7 +258,7 @@ class MainWindow(QMainWindow):
            self.check_company()
 
     def check_company(self):
-        company = self.db.get_data("*", "company")
+        company = self.db.get_data("*", COMPANY)
         if company == ERR:
             return
         for item in company:
@@ -265,17 +268,17 @@ class MainWindow(QMainWindow):
                 self.customer_ = item
 
     def start_file(self):
-        files = {"Доверенность": "/Доверенность.xlsx",
-                 "Накладная": "/Накладная.xlsx",
-                 "Бланк": "/Бланк.docx",
-                 "Суточные": "/Суточные.xlsx",
-                 "Бирки на инстр.": "/Бирки.xlsx",
+        files = {"Доверенность": ATTORNEY,
+                 "Накладная": INVOICE,
+                 "Бланк": BLANK,
+                 "Суточные": DAYLY_M,
+                 "Бирки на инстр.": MARK,
                  "Бланки на нар-ы": "/Наряды.jpg"}
         name = self.sender().text()
-        path = self.conf.get_path("pat_patterns")
-        path = path + files[name]
+        folder = self.conf.get_path("pat_patterns")
+        path = folder + files[name]
         if name in ["Доверенность", "Накладная", "Бланки на нар-ы"]:
-            if files[name][1:] in os.listdir(path):
+            if files[name][1:] in os.listdir(folder):
                 count, ok = QInputDialog.getInt(self, name, "Кол-во копий")
                 if ok:
                     for ind in range(count):

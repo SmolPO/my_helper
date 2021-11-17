@@ -16,7 +16,7 @@ class NewContact(TempForm):
         self.status_ = True
         self.conf = Ini(self)
         self.db = DataBase(self)
-
+        self.table = CONTRACTS
         ui_file = self.conf.get_ui("new_contract")
         if not ui_file:
             self.status_ = False
@@ -33,7 +33,7 @@ class NewContact(TempForm):
             self.status_ = False
             return
         self.list_ui = [self.name, self.cb_comp, self.number, self.date, self.my_object, self.work,
-                        self.part, self.price, self.date_end, self.nds, self.avans, self.status]
+                        self.part, self.price, self.date_end, self.nds, self.avans, self.nomn, self.datv, self.status]
         self.cb_comp.addItem("1. " + self.parent.customer_[0])
         self.b_menu.setEnabled(False)
         self.path = self.conf.get_path("contracts")

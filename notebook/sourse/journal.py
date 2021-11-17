@@ -81,7 +81,7 @@ class Journal(QDialog):
         self.data = self.get_data()
         if not self.check_input():
             return False
-        path = self.conf.get_path("path") + self.conf.get_path("pat_patterns") + "/Журнал.docx"
+        path = self.conf.get_path("path") + self.conf.get_path("pat_patterns") + JOURNAL_FILE
         try:
             doc = docxtpl.DocxTemplate(path)
         except:

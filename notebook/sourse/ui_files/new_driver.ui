@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
-    <height>394</height>
+    <width>701</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>10</x>
      <y>10</y>
-     <width>211</width>
+     <width>681</width>
      <height>41</height>
     </rect>
    </property>
@@ -32,13 +32,16 @@
    <property name="text">
     <string>Добавить водителя</string>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
   <widget class="QLineEdit" name="family">
    <property name="geometry">
     <rect>
      <x>130</x>
      <y>70</y>
-     <width>150</width>
+     <width>250</width>
      <height>30</height>
     </rect>
    </property>
@@ -54,7 +57,7 @@
     <rect>
      <x>130</x>
      <y>110</y>
-     <width>150</width>
+     <width>250</width>
      <height>30</height>
     </rect>
    </property>
@@ -70,7 +73,7 @@
     <rect>
      <x>130</x>
      <y>150</y>
-     <width>150</width>
+     <width>250</width>
      <height>30</height>
     </rect>
    </property>
@@ -141,7 +144,7 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>410</x>
      <y>70</y>
      <width>151</width>
      <height>31</height>
@@ -160,8 +163,8 @@
   <widget class="QPushButton" name="b_ok">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>220</y>
+     <x>520</x>
+     <y>340</y>
      <width>150</width>
      <height>30</height>
     </rect>
@@ -179,8 +182,8 @@
   <widget class="QPushButton" name="b_cancel">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>260</y>
+     <x>520</x>
+     <y>380</y>
      <width>150</width>
      <height>30</height>
     </rect>
@@ -198,8 +201,8 @@
   <widget class="QPushButton" name="b_change">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>300</y>
+     <x>350</x>
+     <y>340</y>
      <width>150</width>
      <height>30</height>
     </rect>
@@ -217,8 +220,8 @@
   <widget class="QComboBox" name="cb_select">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>340</y>
+     <x>170</x>
+     <y>380</y>
      <width>150</width>
      <height>30</height>
     </rect>
@@ -238,7 +241,7 @@
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>170</x>
      <y>340</y>
      <width>150</width>
      <height>30</height>
@@ -257,8 +260,8 @@
   <widget class="QPushButton" name="b_kill">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>340</y>
+     <x>350</x>
+     <y>380</y>
      <width>150</width>
      <height>30</height>
     </rect>
@@ -276,10 +279,10 @@
   <widget class="QTextEdit" name="passport">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>410</x>
      <y>110</y>
-     <width>150</width>
-     <height>91</height>
+     <width>271</width>
+     <height>211</height>
     </rect>
    </property>
    <property name="font">
@@ -313,7 +316,7 @@
     <rect>
      <x>130</x>
      <y>230</y>
-     <width>150</width>
+     <width>250</width>
      <height>91</height>
     </rect>
    </property>
@@ -329,7 +332,7 @@
     <rect>
      <x>130</x>
      <y>190</y>
-     <width>150</width>
+     <width>111</width>
      <height>30</height>
     </rect>
    </property>

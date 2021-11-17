@@ -25,8 +25,8 @@ class WeekPass(TempPass):
         self.cb_to.setEnabled(False)
         self.d_from.setEnabled(False)
         self.d_to.setEnabled(False)
-        self.data = {"number": "", "date": "", "week_day": "", "contract": "", "type_work": "",
-                     "part": "", "company": "", "customer": "", "post_boss": "", "boss_part": ""}
+        self.data = {"number": "", "date": "", "week_day": "", "contract": "", "work": "",
+                     "company": "", "customer": "", "post_boss": "", "boss_part": ""}
         self.list_ui = [self.worker_1, self.worker_2, self.worker_3, self.worker_4,
                         self.worker_5, self.worker_6, self.worker_7, self.worker_8, self.worker_9]
         self.list_cb = [NOT for i in range(len(self.list_ui))]

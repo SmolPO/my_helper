@@ -13,9 +13,9 @@ class Asr(QDialog):
     def __init__(self, parent):
         super(Asr, self).__init__()
         self.conf = Ini(self)
-        self.ui_file = self.conf.get_ui("asr")
-        if self.check_start() == ERR:
-            return
+        self.db = DataBase(self)
+        ui_file = self.conf.get_ui("asr")
+        uic.loadUi(ui_file, self)
         self.parent = parent
         self.contract = parent.contract
         self.year.setCurrentIndex(dt.datetime.now().year-2021)
@@ -34,15 +34,6 @@ class Asr(QDialog):
         self.ind = 0
         self.path = self.conf.get_path("pat_patterns")
         self.my_id = 0
-
-    def check_start(self):
-        self.status_ = True
-        try:
-            uic.loadUi(self.ui_file, self)
-            return True
-        except:
-            self.status_ = False
-            return msg_er(self, GET_UI)
 
     def change_count(self):
         self.count.setValue(len(self.numbers.toPlainText().split(",")))
@@ -70,7 +61,7 @@ class Asr(QDialog):
         morph = pymorphy2.MorphAnalyzer()
         data = dict()
         bosses = [self.boss_1, self.boss_2, self.boss_3, self.boss_4]
-        tables = ["itrs", "itrs", "bosses", "bosses"]
+        tables = [ITRS * 2, BOSSES * 2]
         for ind in range(1, 5):
             boss = bosses[ind-1].currentText()
             post = self.get_post(boss.split(".")[0], tables[ind-1])
@@ -81,7 +72,7 @@ class Asr(QDialog):
             data["boss_" + str(ind)] = val
         val = "_______" if self.sb_value.value() == 0 else "__" + str(self.sb_value.value()) + "__"
         data["work"] = self.work.toPlainText() + val + self.cb_SI.currentText()
-        materials = self.material.currentText() if self.material.currentText() != "(нет)" else "_"*40
+        materials = self.material.currentText() if self.material.currentText() != NOT else "_"*40
         data["material"] = materials
         data["next_work"] = self.next_work.toPlainText()
         data["day_end"] = day_end
@@ -97,17 +88,17 @@ class Asr(QDialog):
 
     def get_data(self):
         data = list()
-        data.append(self.boss_1.currentText() + self.get_post(self.boss_1.currentText().split(".")[0], "itrs"))
-        data.append(self.boss_2.currentText() + self.get_post(self.boss_2.currentText().split(".")[0], "itrs"))
-        data.append(self.boss_3.currentText() + self.get_post(self.boss_3.currentText().split(".")[0], "bosses"))
-        data.append(self.boss_4.currentText() + self.get_post(self.boss_4.currentText().split(".")[0], "bosses"))
+        data.append(self.boss_1.currentText() + self.get_post(self.boss_1.currentText().split(".")[0], ITRS))
+        data.append(self.boss_2.currentText() + self.get_post(self.boss_2.currentText().split(".")[0], ITRS))
+        data.append(self.boss_3.currentText() + self.get_post(self.boss_3.currentText().split(".")[0], BOSSES))
+        data.append(self.boss_4.currentText() + self.get_post(self.boss_4.currentText().split(".")[0], BOSSES))
         data.append(self.work.toPlainText() + "_" * 10 + self.cb_SI.currentText())
         data.append(self.material.currentText())
         data.append(self.next_work.text())
         return data
 
     def get_post(self, my_id, table):
-        rows = self.parent.parent.db.get_data("*", table)
+        rows = self.db.get_data(ALL, table)
         for item in rows:
             if str(item[-1]) == my_id:
                 return item[3]
@@ -131,18 +122,15 @@ class Asr(QDialog):
         if self.data == ERR:
             return
         path = self.path + ASR_FILE
-        try:
-            doc = docxtpl.DocxTemplate(path)
-        except:
+        doc = save_open_docxtpl(path)
+        if not doc:
             return msg_er(self, GET_FILE + path)
 
         doc.render(self.data)
         path = self.conf.get_path("contracts")
         path = path + "/1030/102021" + "/1.docx"
-        try:
-            doc.save(path)
-            os.startfile(path)
-        except:
+        if not save_save_doc(path, doc) or \
+                not save_open(path):
             return msg_er(self, GET_FILE + path)
 
     def save_pattern(self):

@@ -35,25 +35,14 @@ class DTPass(TempPass):
         if NOT in self.cb_contracts.currentText():
             msg_info(self, "Выберите договор")
             return
-        rows = self.parent.db.get_data("number, date, object, type_work, place", CONTRACTS)
-        contract = ""
-        place = ""
-        work = ""
+        rows = self.parent.db.get_data("number, date, datv, place", CONTRACTS)
         for row in rows:
             if self.cb_contracts.currentText() in row:
-                contract = row
-                work = row[-2]
-                place = row[-1]
-                break
-        if "цех" in contract[-1].lower():
-            place = contract[-1].replace("цех", "цеха")
-        if "ремонт" in contract[-2].lower():
-            work = contract[-1].replace("ремонт", "по ремонту ")
-            work += 'на объекте: "' + contract[-2] + '" '
-        self.data["work"] = work + " " + place
-        self.data["contract"] = contract[0] + " от " + contract[1]
-        self.data["d_to"] = self.d_to.text()
-        self.data["d_from"] = self.d_from.text()
+                self.data["work"] = row[-2]
+                self.data["place"] = row[-1]
+                self.data["contract"] = row[0] + " от " + row[1]
+                self.data["d_to"] = self.d_to.text()
+                self.data["d_from"] = self.d_from.text()
 
     # обработчики кнопок
     def _ev_ok(self):

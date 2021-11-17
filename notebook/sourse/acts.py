@@ -11,6 +11,7 @@ class Acts(QDialog):
     def __init__(self, parent):
         super(Acts, self).__init__()
         self.conf = Ini(self)
+        self.db = DataBase(self)
         self.ui_file = self.conf.get_ui("acts")
         self.parent = parent
         uic.loadUi(self.ui_file, self)
@@ -28,7 +29,7 @@ class Acts(QDialog):
             return
 
     def init_contracts(self):
-        rows = self.parent.db.get_data("id, number", "contracts")
+        rows = self.db.get_data("id, number", CONTRACTS)
         if rows == ERR:
             return ERR
         for item in rows:
@@ -64,27 +65,20 @@ class Acts(QDialog):
         if ok:
             if not name:
                 return
-            try:
-                path_save = path_save + "/" + name + "." + tmp
-                os.replace(self.filename, path_save)
-                msg_info(self, "Сообщение", ADDED_FILE)
-            except:
-                msg_info(self, GET_FILE + path_save)
-                return
-        pass
+            path_save = path_save + "/" + name + "." + tmp
+            if not save_replace(self.filename, path_save):
+                msg_info(self, GET_FILE + save_replace + " или " + path_save)
+                return False
+            msg_info(self, "Сообщение", ADDED_FILE)
 
     def ev_latter(self):
         path_from = self.conf.get_path("pat_patterns") + "/Бланк.docx"
         path_to = self.conf.get_path("path") + "/Исходящие/Письма/Письмо.docx"
-        try:
-            os.replace(path_from, path_to)
-        except:
+        if not save_replace(path_from, path_to):
             mes.question(self, "Сообщение", "Файл " + path_from + " не найден", mes.Ok)
             return False
         if not save_open(path_to):
             msg_info(self, GET_FILE + path_to)
-
-        pass
 
     def ev_month(self):
         if not save_open(self.path):

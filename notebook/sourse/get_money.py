@@ -136,7 +136,7 @@ class GetMoney(QDialog):
         self.day_money(self.cb_day.isChecked())
         itr = ""
         # morph = pymorphy2.MorphAnalyzer()
-        people = self.parent.db.get_data("post, family, name, surname, id", "itrs")
+        people = self.parent.db.get_data("post, family, name, surname, id", ITRS)
         if people == ERR:
             return ERR
         for boss in people:
