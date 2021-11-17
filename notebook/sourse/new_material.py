@@ -7,17 +7,19 @@ from database import *
 class NewMaterial(TempForm):
     def __init__(self, parent=None):
         self.conf = Ini(self)
+        self.db = DataBase(self)
         ui_file = self.conf.get_ui("new_materials")
-        super(NewMaterial, self).__init__(ui_file, parent, "materials")
+        self.rows_from_db = self.db.get_data(ALL, MATERIALS)
+        super(NewMaterial, self).__init__(ui_file, parent)
         self.b_change.setText("Добавить")
         self.b_ok.setText("Создать")
         self.provider_ = ""
         self.add_new = True
         self.provider.stateChanged.connect(self.provider_select)
-        self.rows_from_db = self.parent.db.init_list(self.cb_select, "*", self.table)
+        self.rows_from_db = self.parent.db.init_list(self.cb_select, ALL, MATERIALS)
         if self.rows_from_db == ERR:
             return
-        if self.parent.db.init_list(self.cb_contracts, "number, id", "contracts") == ERR:
+        if self.parent.db.init_list(self.cb_contracts, "number, id", CONTRACTS) == ERR:
             return
         self.init_mask()
         self.list_ui = [self.name, self.cb_si, self.value, self.cb_contracts, self.cb_si]
@@ -36,7 +38,7 @@ class NewMaterial(TempForm):
     def _set_data(self, data):
         if not data:
             return
-        contracts = self.parent.db.get_data("name, number", "contracts")
+        contracts = self.parent.db.get_data("name, number", CONTRACTS)
         if contracts == ERR:
             return
         i = iter(range(0, 5))

@@ -8,16 +8,18 @@ class NewITR(TempForm):
     def __init__(self, parent):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
         ui_file = self.conf.get_ui("new_itr")
-        super(NewITR, self).__init__(ui_file, parent, "itrs")
+        self.rows_from_db = self.db.get_data(ALL, ITRS)
+        super(NewITR, self).__init__(ui_file, parent)
         # my_pass
         self.init_mask()
         self.cb_vac.activated[str].connect(self.change_vac)
-        self.rows_from_db = self.parent.db.init_list(self.cb_select, "*", self.table, people=True)
+        self.rows_from_db = self.parent.db.init_list(self.cb_select, ALL, ITRS, people=True)
         if self.rows_from_db == ERR:
             self.status_ = False
             return
-        if self.parent.db.init_list(self.cb_auto, "*", "auto") == ERR:
+        if self.parent.db.init_list(self.cb_auto, ALL, AUTO) == ERR:
             self.status_ = False
             return
         self.list_ui = [self.family, self.name, self.surname, self.post,

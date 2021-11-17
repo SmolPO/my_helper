@@ -7,14 +7,14 @@ from database import *
 
 
 class TempPass(QDialog):
-    def __init__(self, ui_file, parent, table):
+    def __init__(self, ui_file, parent):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
         super(TempPass, self).__init__()
         self.parent = parent
         if not self.check_start(ui_file):
             return
-        self.table = table
         self.db = DataBase(self)
         # my_pass
         self.b_ok.clicked.connect(self.ev_ok)

@@ -8,11 +8,11 @@ fields = ["model", "brand", "gov_number", "track_number", "id"]
 
 class NewAuto(TempForm):
     def __init__(self, parent=None):
-        conf = Ini(self)
-        ui_file = conf.get_ui("new_auto")
-        if not ui_file:
-            return
-        super(NewAuto, self).__init__(ui_file, parent, "auto")
+        self.conf = Ini(self)
+        self.db = DataBase(self)
+        ui_file = self.conf.get_ui("new_auto")
+        self.rows_from_db = self.db.get_data(ALL, AUTO)
+        super(NewAuto, self).__init__(ui_file, parent)
         if not self.status_:
             return
         self.is_track.stateChanged.connect(self.have_track)
@@ -22,7 +22,7 @@ class NewAuto(TempForm):
         self.track_number.setText(NO)
 
     def init_list(self):
-        rows = self.parent.db.get_data("id, gov_number, model", self.table)
+        rows = self.parent.db.get_data("id, gov_number, model", AUTO)
         if rows == ERR:
             return
         self.cb_select.addItem(NOT)

@@ -10,7 +10,8 @@ class NewTool(TempForm):
         self.conf = Ini(self)
         self.db = DataBase(self)
         ui_file = self.conf.get_ui("new_tool")
-        super(NewTool, self).__init__(ui_file, parent, TOOLS)
+        self.rows_from_db = self.db.get_data(ALL, TOOLS)
+        super(NewTool, self).__init__(ui_file, parent)
         self.date.setDate(dt.datetime.now().date())
         self.init_select()
         self.list_ui = [self.name, self.code, self.count_, self.date]

@@ -8,12 +8,8 @@ class DrivePass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_driver")
-        if not ui_file or ui_file == ERR:
-            self.status_ = False
-            return
-        super(DrivePass, self).__init__(ui_file, parent, "drivers")
-        if not self.status_:
-            return
+        self.table = DRIVERS
+        super(DrivePass, self).__init__(ui_file, parent)
         self.cb_contracts.activated[str].connect(self.contract_changed)
         self.cb_auto.activated[str].connect(self.auto_changed)
         self.cb_drivers.activated[str].connect(self.driver_changed)

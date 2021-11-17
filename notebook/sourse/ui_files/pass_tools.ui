@@ -67,6 +67,9 @@
      <pointsize>12</pointsize>
     </font>
    </property>
+   <property name="maximum">
+    <number>100000</number>
+   </property>
   </widget>
   <widget class="QDateEdit" name="d_note">
    <property name="geometry">
@@ -99,11 +102,6 @@
      <pointsize>12</pointsize>
     </font>
    </property>
-   <item>
-    <property name="text">
-     <string>(нет)</string>
-    </property>
-   </item>
   </widget>
   <widget class="QComboBox" name="si_1">
    <property name="geometry">

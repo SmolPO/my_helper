@@ -74,20 +74,20 @@ class Acts(QDialog):
         pass
 
     def ev_latter(self):
+        path_from = self.conf.get_path("pat_patterns") + "/Бланк.docx"
+        path_to = self.conf.get_path("path") + "/Исходящие/Письма/Письмо.docx"
         try:
-            path_from = self.conf.get_path("pat_patterns") + "/Бланк.doc"
-            path_to = self.conf.get_path("path") + "/Исходящие/Письма/Письмо.doc"
             os.replace(path_from, path_to)
-            os.startfile(path_to)
         except:
             mes.question(self, "Сообщение", "Файл " + path_from + " не найден", mes.Ok)
             return False
+        if not save_open(path_to):
+            msg_info(self, GET_FILE + path_to)
+
         pass
 
     def ev_month(self):
-        try:
-            os.startfile(self.path)
-        except:
+        if not save_open(self.path):
             return msg_info(self, GET_FILE + self.path)
         pass
 
@@ -96,9 +96,7 @@ class Acts(QDialog):
         if not wnd.status_:
             return
         wnd.exec_()
-        try:
-            os.startfile(self.path)
-        except:
+        if not save_open(self.path):
             return msg_info(self, GET_FILE + self.path)
         pass
 

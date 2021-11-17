@@ -10,7 +10,8 @@ class MonthPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_month")
-        super(MonthPass, self).__init__(ui_file, parent, "workers")
+        self.table = WORKERS
+        super(MonthPass, self).__init__(ui_file, parent)
         self.count_people = 0
         self.d_from.setDate(dt.datetime.now().date())
         self.d_to.setDate(from_str(".".join([str(count_days[dt.datetime.now().month - 1]),

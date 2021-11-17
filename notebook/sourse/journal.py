@@ -81,8 +81,8 @@ class Journal(QDialog):
         self.data = self.get_data()
         if not self.check_input():
             return False
+        path = self.conf.get_path("path") + self.conf.get_path("pat_patterns") + "/Журнал.docx"
         try:
-            path = self.conf.get_path("path") + self.conf.get_path("pat_patterns") + "/Журнал.docx"
             doc = docxtpl.DocxTemplate(path)
         except:
             msg_er(self, GET_FILE + path)
@@ -91,7 +91,9 @@ class Journal(QDialog):
         try:
             doc.save(self.parent.path + JOURNAL_FILE)
             msg_info(self, "Журнал создан")
-            os.startfile(path)
+            if not save_open(path):
+                msg_er(self, GET_FILE + path)
+                return False
             self.close()
         except:
             msg_er(self, GET_FILE + self.parent.path + JOURNAL_FILE)

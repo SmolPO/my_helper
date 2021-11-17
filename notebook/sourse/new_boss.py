@@ -8,14 +8,16 @@ class NewBoss(TempForm):
     def __init__(self, parent):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
         ui_file = self.conf.get_ui("new_boss")
-        super(NewBoss, self).__init__(ui_file, parent, "bosses")
+        self.rows_from_db = self.db.get_data(ALL, BOSSES)
+        super(NewBoss, self).__init__(ui_file, parent)
         if not self.status_:
             return
-        if self.parent.db.init_list(self.cb_select, "*", "bosses", people=True) == ERR:
+        if self.parent.db.init_list(self.cb_select, ALL, BOSSES, people=True) == ERR:
             self.status_ = False
             return
-        self.parent.db.init_list(self.cb_company, "company, id", "company", people=False )
+        self.parent.db.init_list(self.cb_company, "company, id", COMPANY, people=False )
         self.list_ui = list([self.family, self.name, self.surname, self.post,
                              self.email, self.phone, self.cb_sex, self.cb_company])
 

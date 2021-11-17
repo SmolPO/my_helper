@@ -11,11 +11,14 @@ class NewCompany(TempForm):
     def __init__(self, parent=None):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
         ui_file = self.conf.get_ui("add_company")
-        if not ui_file or ui_file == ERR:
+        self.table = COMPANY
+        self.rows_from_db = self.db.get_data(ALL, COMPANY)
+        if self.rows_from_db == ERR:
             self.status_ = False
             return
-        super(NewCompany, self).__init__(ui_file, parent, "company")
+        super(NewCompany, self).__init__(ui_file, parent)
         if not self.status_:
             return
         self.init_mask()
@@ -24,10 +27,7 @@ class NewCompany(TempForm):
                         self.big_boss, self.big_post, self.big_at, self.big_d_at,
                         self.mng_boss, self.mng_post, self.mng_at, self.mng_d_at,
                         self.cb_status]
-        self.rows_from_db = self.parent.db.init_list(self.cb_select, "*", self.table)
-        if self.rows_from_db == ERR:
-            self.status_ = False
-            return
+        self.db.init_list(self.cb_select, ALL, COMPANY)
 
     def init_mask(self):
         self.ogrn.setValidator(QREVal(QRE("[0-9]{14}")))

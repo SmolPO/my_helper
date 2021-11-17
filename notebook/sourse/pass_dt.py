@@ -8,7 +8,8 @@ class DTPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_dt")
-        super(DTPass, self).__init__(ui_file, parent, "drivers")
+        self.table = DRIVERS
+        super(DTPass, self).__init__(ui_file, parent)
         self.cb_contracts.activated[str].connect(self.change_note)
         self.d_to.setDate(dt.datetime.now().date())
         self.d_from.setDate(dt.datetime.now().date())
@@ -23,7 +24,7 @@ class DTPass(TempPass):
     # инициализация
     def init_contracts(self):
         self.cb_contracts.addItem(NOT)
-        contracts = self.parent.db.get_data("number, id", "contracts")
+        contracts = self.parent.db.get_data("number, id", CONTRACTS)
         if contracts == ERR or not contracts:
             return ERR
         for row in contracts:
@@ -34,7 +35,7 @@ class DTPass(TempPass):
         if NOT in self.cb_contracts.currentText():
             msg_info(self, "Выберите договор")
             return
-        rows = self.parent.db.get_data("number, date, object, type_work, place", "contracts")
+        rows = self.parent.db.get_data("number, date, object, type_work, place", CONTRACTS)
         contract = ""
         place = ""
         work = ""

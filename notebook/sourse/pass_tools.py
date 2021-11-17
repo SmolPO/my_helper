@@ -9,7 +9,8 @@ class ToolsPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_tools")
-        super(ToolsPass, self).__init__(ui_file, parent, TOOLS)
+        self.table = TOOLS
+        super(ToolsPass, self).__init__(ui_file, parent)
         self.cb_contracts.activated[str].connect(self.change_note)
         self.d_to.setDate(dt.datetime.now().date())
         self.data = {"number": "", "date": "", "contract": ""}
@@ -53,7 +54,7 @@ class ToolsPass(TempPass):
         if NOT in self.cb_contracts.currentText():
             msg_info(self, "Выберите договор")
             return
-        rows = self.parent.db.get_data("number, date, object, type_work, place", "contracts")
+        rows = self.parent.db.get_data("number, date, object, type_work, place", CONTRACTS)
         contract = ""
         place = ""
         work = ""

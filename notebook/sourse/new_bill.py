@@ -10,16 +10,15 @@ class NewBill(TempForm):
     def __init__(self, parent):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
         ui_file = self.conf.get_ui("new_bill")
-        if not ui_file or ui_file == ERR:
-            self.status_ = False
-            return
-        super(NewBill, self).__init__(ui_file, parent, "bills")
+        self.rows_from_db = self.db.get_data(ALL, BILLS)
+        super(NewBill, self).__init__(ui_file, parent)
         if not self.status_:
             return
         self.b_bill.clicked.connect(self.ev_bill)
         self.b_report.clicked.connect(self.report)
-        if self.parent.db.init_list(self.cb_buyer, "*", "itrs", people=True) == ERR:
+        if self.parent.db.init_list(self.cb_buyer, ALL, ITRS, people=True) == ERR:
             self.status_ = False
             return
         self.filename = ""
@@ -34,7 +33,7 @@ class NewBill(TempForm):
         return
 
     def init_operations(self):
-        rows = self.parent.db.get_data("*", self.table)
+        rows = self.parent.db.get_data(ALL, BILLS)
         rows.sort(key=lambda x: x[-1])
         if rows == ERR:
             self.status_ = False
@@ -56,7 +55,7 @@ class NewBill(TempForm):
         path_ = self.conf.get_path("bills")
         path = path_ + "/" + str(dt.now().year) + \
                                     "/" + str(dt.now().month) + \
-                                    "/" + str(dt.now().month) + str(dt.now().year) + ".xlsx"
+                                    "/" + str(dt.now().month) + str(dt.now().year) + XLSX
         try:
             wb = openpyxl.load_workbook(path)
         except:
@@ -71,11 +70,10 @@ class NewBill(TempForm):
         sheet['C' + str(row + 3)].value = value
         sheet['D' + str(row + 3)].value = people
         sheet['F2'].value = int(row) + 1
-        try:
-            wb.save(path)
-            os.startfile(path)
-        except:
-            return msg_er(self, GET_FILE)
+        wb.save(path)
+        if not save_open(path):
+            msg_info(self, GET_FILE + path)
+            return
 
     def report(self):
         cur_month, ok = QInputDialog.getItem(self.parent, "Выберите месяц", "Месяц", month, dt.datetime.now().month)
@@ -85,8 +83,8 @@ class NewBill(TempForm):
         year_ = str(dt.datetime.now().year)
         path_ = "/" + str(dt.datetime.now().year) + "/Чеки/" + month_ + "/" + month_ + year_ + XLSX
         path = self.parent.main_path + "/Бухгалтерия" + path_
-        try:
-            os.startfile(path)
-        except:
+        if not save_open(path):
             msg_info(self, "За данный месяц отчет не найден")
+            return
+
 

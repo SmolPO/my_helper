@@ -105,9 +105,7 @@ class GetMoney(QDialog):
             msg_er(self, GET_FILE + print_file)
             return
         self.close()
-        try:
-            os.startfile(print_file)
-        except:
+        if not save_open(print_file):
             msg_er(self, GET_FILE + print_file)
             return
         mes.question(self, "Сообщение", "Запись добавлена", mes.Ok)

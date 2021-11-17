@@ -54,10 +54,12 @@ from get_money import GetMoney
 + 17. Организация босса +
 + 18. Автоматическое формирование списка по объекту.
 + 19. Дизаин окон (2)
-20. Добавить выбор протокола
++ 20. Добавить выбор протокола
 + 21. Дизайн формы Сотрудника
 + 22. Создание ТБ
 + 23. Печать ТБ
+24. Безопасное открытие и сохранение
+25. Тестирование
 Итого 26 часов, реально 20 часов - 2 полных дня.
 Сделать
  """
@@ -72,7 +74,9 @@ class Instruct(QDialog):
         self.b_print.clicked.connect(self.my_print)
 
     def my_print(self):
-        os.startfile(os.getcwd() + "/Инструкция.docx")
+        if not save_open(os.getcwd() + "/Инструкция.docx"):
+            msg_er(self, GET_FILE + os.getcwd() + "/Инструкция.docx")
+            return False
 
 
 class MainWindow(QMainWindow):
@@ -213,73 +217,41 @@ class MainWindow(QMainWindow):
 
     def start_wnd(self):
         name = self.sender().text()
-        _wnd = ""
-        trans = {"workers": "рабочих", "auto": "авто", "contracts": "договоры"}
+        dct = {"Продление на месяц": MonthPass,
+               "Пропуск на выходные": WeekPass,
+               "Разблокировка пропуска": UnlockPass,
+               "Продление на машину": AutoPass,
+               "Выдать пропуск": GetPass,
+               "Разовый пропуск": DrivePass,
+               "Ввоз инстр-ов": ToolsPass,
 
-        forms = {"Продление на месяц": (MonthPass, WORKERS),
-                 "Пропуск на выходные": (WeekPass, WORKERS),
-                 "Разблокировка пропуска": (UnlockPass, WORKERS),
-                 "Материал": (NewMaterial, CONTRACTS),
-                 "Инструмент": (NewTool, CONTRACTS),
-                 "Выдать пропуск": (GetPass, WORKERS),
-                 "Продление на машину": (AutoPass, AUTO),
-                 "Блокнот": (Notepad, None),
-                 "Сайты": (Web, None),
-                 "Исполнительная": (Acts, CONTRACTS),
-                 "Сканер": (PDFModule, None),
-                 "Автомобиль": (NewAuto, None),
-                 "Заказчик": (NewCompany, None),
-                 "Договор": (NewContact, COMPANY),
-                 "Водитель": (NewDriver, None),
-                 "Босс": (NewBoss, COMPANY),
-                 "Сотрудник": (NewWorker, CONTRACTS),
-                 "Прораб": (NewITR, None),
-                 "Чек": (NewBill, None),
-                 "Заявка на деньги": (GetMoney, None),
-                 "Разовый пропуск": (DrivePass, CONTRACTS),
-                 "Ввоз инстр-ов": (ToolsPass, None),
-                 "Тендер": (NewTender, None)}
+               "Материал": NewMaterial,
+               "Инструмент": NewTool,
+               "Договор": NewContact,
+               "Сотрудник": NewWorker,
+               "Автомобиль": NewAuto,
+               "Организация": NewCompany,
+               "Водитель": NewDriver,
+               "Прораб": NewITR,
+               "Чек": NewBill,
+               "Тендер": NewTender,
+               "Босс": NewBoss,
+               "Распечатать ТБ": NewTB,
+               "Журнал-ковид": NewCovid,
+               "Табель": NewTable,
 
-        _wnd = forms.get(name, "")
-        if _wnd:
-            if _wnd[1]:
-                if name == "Договор":
-                    data = self.db.get_data("status", "company")
-                    if not ["Заказчик"] in data:
-                        msg_info(self, "Введите сначала данные Заказчика")
-                        return
-                    else:
-                        wnd = _wnd[0](self)
-                else:
-                    check = self.is_have_some(_wnd[1])
-                    if check == ERR:
-                        return
-                    elif check:
-                        wnd = _wnd[0](self)
-                    else:
-                        msg_info(self, "База данных пока не заполнена. Добавьте сначала " + trans[_wnd[1]])
-                        return
-            else:
-                wnd = _wnd[0](self)
-        elif name == "Распечатать ТБ":
-            wnd = NewTB(self)
-            set_fix_size(wnd)
-            wnd.exec_()
-            return
-        elif name == "Журнал-ковид":
-            wnd = NewCovid(self)
-            set_fix_size(wnd)
-            wnd.create_covid()
-            return
-        elif name == "Табель":
-            wnd = NewTable(self)
-            wnd.create_table()
-            return
-        else:
+               "Блокнот": Notepad,
+               "Сайты": Web,
+               "Сканер": PDFModule,
+               "Заявка на деньги": GetMoney,
+               "Исполнительная": Acts}
+        wnd = dct.get(name)(self)
+        check = self.is_have_some(name)
+        if check == ERR or not check:
             return
         set_fix_size(wnd)
         wnd.exec_()
-        if self.sender().text() == CUSTOMER:
+        if self.sender().text() == "Организация":
            self.check_company()
 
     def check_company(self):
@@ -295,27 +267,24 @@ class MainWindow(QMainWindow):
     def start_file(self):
         files = {"Доверенность": "/Доверенность.xlsx",
                  "Накладная": "/Накладная.xlsx",
-                 "Бланк": "/Бланк.doc",
-                 "Суточные": "/Суточные.docx",
-                 "Бирки на инстр.": "/Бирки.docx",
-                 "Бланки на нар-ы": "/Бланки.jpg"}
+                 "Бланк": "/Бланк.docx",
+                 "Суточные": "/Суточные.xlsx",
+                 "Бирки на инстр.": "/Бирки.xlsx",
+                 "Бланки на нар-ы": "/Наряды.jpg"}
         name = self.sender().text()
         path = self.conf.get_path("pat_patterns")
+        path = path + files[name]
         if name in ["Доверенность", "Накладная", "Бланки на нар-ы"]:
             if files[name][1:] in os.listdir(path):
-                path = path + files[name]
                 count, ok = QInputDialog.getInt(self, name, "Кол-во копий")
                 if ok:
                     for ind in range(count):
                         print_to(path, TO_PAPER)
             else:
-                msg_info(self, GET_FILE + path)
+                msg_info(self, GET_FILE + path + files[name])
                 return
         else:
-            path = path + files[name]
-            try:
-                os.startfile(path)
-            except:
+            if not save_open(path):
                 msg_info(self, GET_FILE + path)
             return
 
@@ -344,12 +313,46 @@ class MainWindow(QMainWindow):
             self.l_weather.setText("погода")
             self.l_temp.setText("температура")
 
-    def is_have_some(self, table):
-        data = self.db.get_data("*", table)
+    def is_have_some(self, name):
+        table = ""
+        text = ""
+        if name == "Табель":
+            wnd = NewTable(self)
+            wnd.create_table()
+            return False
+        if name == "Журнал-ковид":
+            table = WORKERS
+            text = "Добавьте сначала хотя бы одного рабочего"
+            data = self.db.get_data(ALL, table)
+            if data == ERR:
+                return ERR
+            if not data:
+                msg_info(self, text)
+                return False
+            wnd = NewCovid(self)
+            wnd.create_covid()
+            return False
+        elif name == "Сотрудники":
+            table = CONTRACTS
+            text = "Добавьте сначала хотя бы один договор"
+        elif name == "Договор":
+            data = self.db.get_data("status", COMPANY)
+            if not [CUSTOMER] in data:
+                msg_info(self, "Введите сначала данные Заказчика")
+                return False
+            table = COMPANY
+            text = "Добавьте сначала хотя бы одну организацию"
+        elif name == "Босс":
+            table = COMPANY
+            text = "Добавьте сначала хотя бы одну организацию"
+        else:
+            return True
+        data = self.db.get_data(ALL, table)
         if data == ERR:
             return ERR
         if not data:
-             return False
+            msg_info(self, text)
+            return False
         return True
 
     def sql_mes(self):

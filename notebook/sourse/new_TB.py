@@ -9,12 +9,12 @@ class NewTB(QDialog):
     def __init__(self, parent=None):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
         ui_file = self.conf.get_ui("new_TB")
         super(NewTB, self).__init__()
         uic.loadUi(ui_file, self)
         self.parent = parent
-        self.table = "workers"
-        self.rows_from_db = self.parent.db.get_data("*", self.table)
+        self.rows_from_db = self.db.get_data(ALL, WORKERS)
         if self.rows_from_db == ERR:
             self.status_ = False
             return
@@ -28,10 +28,9 @@ class NewTB(QDialog):
                         self.worker_21, self.worker_22, self.worker_23, self.worker_24, self.worker_25,
                         self.worker_26, self.worker_27, self.worker_28, self.worker_29, self.worker_30]
         self.list_cb = [NOT for i in range(len(self.list_ui))]
-        rows = [self.parent.db.get_data(ALL, WORKERS), self.parent.db.get_data(ALL, ITRS)]
-        if ERR in rows:
+        self.all_people = self.parent.db.get_data(ALL, WORKERS)
+        if self.all_people == ERR:
             return
-        self.all_people = rows[0] + rows[1]
         self.init_workers()
 
     def init_workers(self):
@@ -119,6 +118,9 @@ class NewTB(QDialog):
 
     def ev_ok(self):
         people = self.get_list_people()
+        if not people:
+            msg_info(self, "Выберите хотя бы одного сотрудника")
+            return
         self.print_prots(people)
         self.print_study(people)
         self.print_height(people)
@@ -151,7 +153,8 @@ class NewTB(QDialog):
                                                   people[20] + " от " + people[22]
         path = self.conf.get_path("tb") + "/Инструктажи/" + str(dt.datetime.now().date()) + DOCX
         doc.save(path)
-        os.startfile(path)
+        if not save_open(path):
+            msg_info(self, GET_FILE + path)
 
     def print_prots(self, list_people):
         docs = list()

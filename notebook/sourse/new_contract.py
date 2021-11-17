@@ -15,18 +15,21 @@ class NewContact(TempForm):
     def __init__(self, parent=None):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
+
         ui_file = self.conf.get_ui("new_contract")
         if not ui_file:
             self.status_ = False
             return
-        super(NewContact, self).__init__(ui_file, parent, "contracts")
+        self.rows_from_db = self.db.get_data(ALL, CONTRACTS)
+        super(NewContact, self).__init__(ui_file, parent)
         if not self.status_:
             return
         self.init_mask()
         self.b_docs.clicked.connect(self.create_docs)
         self.b_menu.clicked.connect(self.start_menu)
         self.cb_select.activated[str].connect(self.ev_select)
-        if self.parent.db.init_list(self.cb_select, "number, id", self.table) == ERR:
+        if self.parent.db.init_list(self.cb_select, "number, id", CONTRACTS) == ERR:
             self.status_ = False
             return
         self.list_ui = [self.name, self.cb_comp, self.number, self.date, self.my_object, self.work,
@@ -170,8 +173,9 @@ class CreateContract(QDialog):
                 return
             else:
                 msg_info(self, "Документ создан")
-                os.startfile(path)
-                return
+                if not save_open(path):
+                    msg_info(self, GET_FILE + path)
+                    return
         elif name == "Журнал":
             wnd = Journal(self)
             if not wnd.status_:
@@ -273,9 +277,7 @@ class MenuContract(QDialog):
                  "Договор": "/Документы/Договор.pdf",
                  "Журнал": "/Журнал работ.docx",
                  "Материалы": "/Документы/Материалы.pdf"}
-        try:
-            os.startfile(self.path + files[text])
-        except:
+        if not save_open(self.path + files[text]):
             return msg_er(self, GET_FILE + self.path + files[text])
 
 

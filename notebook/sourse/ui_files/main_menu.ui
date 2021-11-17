@@ -125,7 +125,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Заказчик</string>
+     <string>Организация</string>
     </property>
    </widget>
    <widget class="QPushButton" name="b_new_person">

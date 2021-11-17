@@ -13,7 +13,8 @@ class UnlockPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_unlock")
-        super(UnlockPass, self).__init__(ui_file, parent, "workers")
+        self.table = WORKERS
+        super(UnlockPass, self).__init__(ui_file, parent)
         self.parent = parent
         # my_pass
         self.d_from.setDate(dt.datetime.now().date())
@@ -112,7 +113,7 @@ class UnlockPass(TempPass):
             data["date_doc"] = data_vac[0]
             data["num_doc"] = data_vac[2]
 
-        path = self.conf.get_path("notes_docs") + "/" + str(int(next_id) + 1) + "_" + self.d_note.text() + ".docx"
+        path = self.conf.get_path("notes_docs") + "/" + str(int(next_id) + 1) + "_" + self.d_note.text() + DOCX
         doc.render(data)
         try:
             doc.save(path)

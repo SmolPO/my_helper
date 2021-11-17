@@ -1,12 +1,12 @@
 import openpyxl as xlsx
 from openpyxl.styles import Side, Border
-import os
 from database import *
 
 
 class NewCovid:
     def __init__(self, parent=None):
         self.conf = Ini(self)
+        self.db = DataBase(parent)
         self.parent = parent
         self.border = Border(top=Side(border_style='thin', color='FF000000'),
                            right=Side(border_style='thin', color='FF000000'),
@@ -15,8 +15,8 @@ class NewCovid:
 
     def create_covid(self):
         list_people = list()
-        rows_ = [self.parent.db.get_data("family, name, surname, post, status, id", "workers"),
-               self.parent.db.get_data("family, name, surname, post, status, id", "itrs")]
+        rows_ = [self.db.get_data("family, name, surname, post, status, id", WORKERS),
+               self.db.get_data("family, name, surname, post, status, id", ITRS)]
         if ERR in rows_:
             return
         rows = rows_[0] + rows_[1]
@@ -55,6 +55,6 @@ class NewCovid:
         doc.print_area = "A1:G" + str(len(list_people) + delta)
         try:
             doc.save(path_save)
-            os.startfile(path_save)
+            print_to(path_save)
         except:
             return msg_er(self, GET_FILE + path_save)

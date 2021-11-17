@@ -14,7 +14,8 @@ class AutoPass(TempPass):
         if not ui_file or ui_file == ERR:
             self.status_ = False
             return
-        super(AutoPass, self).__init__(ui_file, parent, "auto")
+        self.table = AUTO
+        super(AutoPass, self).__init__(ui_file, parent)
         uic.loadUi(ui_file, self)
         # my_pass
         self.b_open.clicked.connect(self.my_open_file)

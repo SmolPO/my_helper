@@ -8,9 +8,9 @@ class WeekPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_week")
-        super(WeekPass, self).__init__(ui_file, parent, "contracts")
+        self.table = CONTRACTS
+        super(WeekPass, self).__init__(ui_file, parent)
         self.parent = parent
-        self.table = "contracts"
         self.rows_from_db = self.parent.db.get_data("*", self.table)
         self.d_from.setDate(dt.datetime.now().date())
         self.d_to.setDate(dt.datetime.now().date())
@@ -45,7 +45,7 @@ class WeekPass(TempPass):
         self.d_to.setEnabled(state)
 
     def object_select(self):
-        rows = self.parent.db.get_data("*", "workers")
+        rows = self.parent.db.get_data("*", WORKERS)
         list_people = []
         for row in rows:
             if self.cb_object.currentText() in row:
@@ -80,7 +80,7 @@ class WeekPass(TempPass):
             self.cb_object.addItem(row[2])
 
     def init_boss(self):
-        rows = self.parent.db.get_data("family, name, surname, post", "bosses")
+        rows = self.parent.db.get_data("family, name, surname, post", BOSSES)
         if rows == ERR:
             return msg_er(self, GET_DB)
         for people in rows:

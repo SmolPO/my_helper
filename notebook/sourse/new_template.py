@@ -8,15 +8,15 @@ from database import *
 
 
 class TempForm (QDialog):
-    def __init__(self, ui_file, parent, table):
+    def __init__(self, ui_file, parent):
         super(TempForm, self).__init__()
         self.status_ = True
+        self.db = DataBase(self)
         self.conf = Ini(self)
         self.path_ = ui_file
         if self.check_start(ui_file) == ERR:
             return
         self.parent = parent
-        self.table = table
         self.b_ok.clicked.connect(self.ev_ok)
         self.b_cancel.clicked.connect(self.close)
         self.b_kill.clicked.connect(self.ev_kill)
@@ -24,7 +24,6 @@ class TempForm (QDialog):
         self.cb_select.activated[str].connect(self.ev_select)
         self.but_status("add")
 
-        self.rows_from_db = self.parent.db.get_data("*", self.table)
         if self.rows_from_db == ERR:
             return
         if not self.rows_from_db:

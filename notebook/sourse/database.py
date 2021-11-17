@@ -78,6 +78,9 @@ COMPANY = "company"
 CONTRACTS = "contracts"
 TOOLS = "tools"
 TENDERS = "tenders"
+BILLS = "bills"
+FINANCE = "finance"
+MATERIALS = "materials"
 
 ASR_FILE = "/asr.docx"
 JOURNAL_FILE = "/Журнал.docx"
@@ -394,7 +397,17 @@ def print_to(file, type_=TO_PAPER):
     conf = Ini()
     printer = conf.get_config(type_)
     win32print.SetDefaultPrinter(printer)
-    os.startfile(file, "print")
+    try:
+        os.startfile(file, "print")
+    except:
+        pass
+
+
+def save_open(file):
+    try:
+        os.startfile(file)
+    except:
+        return False
 
 
 def add_unic_items(wgt, table, key):

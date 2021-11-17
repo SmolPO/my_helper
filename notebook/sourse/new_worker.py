@@ -15,8 +15,11 @@ class NewWorker(TempForm):
     def __init__(self, parent=None):
         self.status_ = True
         self.conf = Ini(self)
+        self.db = DataBase(self)
         ui_file = self.conf.get_ui("new_worker")
-        super(NewWorker, self).__init__(ui_file, parent, "workers")
+        self.table = WORKERS
+        self.rows_from_db = self.db.get_data(ALL, WORKERS)
+        super(NewWorker, self).__init__(ui_file, parent)
         # my_pass
         self.cb_vac.activated[str].connect(self.change_vac)
         self.b_send_docs.clicked.connect(self.add_docs)
@@ -31,11 +34,11 @@ class NewWorker(TempForm):
                         self.n_prot, self.n_card, self.d_prot, self.cb_contract,
                         self.d_vac_1, self.d_vac_2, self.place,
                         self.vac_doc, self.cb_vac, self.status]
-        self.rows_from_db = self.parent.db.init_list(self.cb_select, "*", self.table, people=True)
+        self.rows_from_db = self.parent.db.init_list(self.cb_select, ALL, WORKERS, people=True)
         if self.rows_from_db == ERR:
             self.status_ = False
             return
-        if self.parent.db.init_list(self.cb_contract, "number, id", "contracts") == ERR:
+        if self.parent.db.init_list(self.cb_contract, "number, id", CONTRACTS) == ERR:
             self.status_ = False
             return
         self.auto_numbers = ()

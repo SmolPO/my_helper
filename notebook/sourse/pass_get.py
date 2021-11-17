@@ -8,10 +8,11 @@ class GetPass(TempPass):
         self.status_ = True
         self.conf = Ini(self)
         ui_file = self.conf.get_ui("pass_get")
+        self.table = WORKERS
         if not ui_file or ui_file == ERR:
             self.status_ = False
             return
-        super(GetPass, self).__init__(ui_file, parent, "workers")
+        super(GetPass, self).__init__(ui_file, parent)
         if not self.status_:
             return
         # my_pass
@@ -35,7 +36,7 @@ class GetPass(TempPass):
             return
 
     def init_contracts(self):
-        contracts = self.parent.db.get_data("id, name", "contracts")
+        contracts = self.parent.db.get_data("id, name", CONTRACTS)
         if contracts == ERR or not contracts:
             return ERR
         for row in contracts:
@@ -64,7 +65,7 @@ class GetPass(TempPass):
         self.data["end_date"] = self.d_to.text()
         self.data["customer"] = self.parent.customer
         self.data["company"] = self.parent.company
-        rows = self.parent.db.get_data("id, number, date", "contracts")
+        rows = self.parent.db.get_data("id, number, date", CONTRACTS)
         if rows == ERR:
             return ERR
         for contract in rows:
