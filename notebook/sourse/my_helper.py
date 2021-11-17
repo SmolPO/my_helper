@@ -65,7 +65,6 @@ from get_money import GetMoney
 Сделать
  """
 
-
 class Instruct(QDialog):
     def __init__(self, parent):
         super(Instruct, self).__init__()
@@ -75,8 +74,8 @@ class Instruct(QDialog):
         self.b_print.clicked.connect(self.my_print)
 
     def my_print(self):
-        if not save_open(os.getcwd() + INSTUCTION):
-            msg_er(self, GET_FILE + os.getcwd() + INSTUCTION)
+        if not save_open(os.getcwd() + INSTRUCTION):
+            msg_er(self, GET_FILE + os.getcwd() + INSTRUCTION)
             return False
 
 

@@ -184,7 +184,6 @@ class DataBase:
 
     def my_commit(self, data):
         self.connect_to_db()
-        print(data)
         self.cursor.execute(data)
         self.conn.commit()
         if data:

@@ -120,8 +120,6 @@ class NewWorker(TempForm):
     def create_tb(self):
         TB = CreateTB(self)
         TB.exec_()
-        ok = msg_info(self, "Протоколы по ОТ, ЭБ и ПТМ успешно созданы!")
-        return ok
 
     def init_docs(self):
         list_docs = [[], [], []]
@@ -267,6 +265,7 @@ class CreateTB(QDialog):
 
         dict_docs = self.create_dict(people, 17)
         self.create_study_docs(dict_docs)
+        ok = msg_info(self, "Протоколы по ОТ, ЭБ и ПТМ успешно созданы!")
         self.close()
 
     def get_list_people(self):
@@ -393,6 +392,7 @@ class CreateTB(QDialog):
                 for paragraph in source_document.paragraphs:
                     text = paragraph.text
                     target_document.add_paragraph(text)
+                os.startfile(card_res[ind])
                 yield
 
     def find_all(self, number, ind):
